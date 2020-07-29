@@ -8,6 +8,11 @@ class TinyMceEditor extends HTMLElement {
   _shadowDom: ShadowRoot;
   _target: Element;
   _editor: any;
+  _form: HTMLFormElement | null;
+
+  static get formAssociated() {
+    return true;
+  }
 
   static get observedAttributes() {
     return ['disabled'];
@@ -19,7 +24,16 @@ class TinyMceEditor extends HTMLElement {
     this._shadowDom = this.attachShadow({mode:'open'});
     this._target = document.createElement('textarea');
     this._shadowDom.appendChild(this._target);
+    this._form = null;
   };
+
+  private formDataHandler = (evt: Event) => {
+    const name = this.name;
+    if (name !== null) {
+      const data = (evt as any).formData as FormData;
+      data.append(name, this.value);
+    }
+  }
 
   attributeChangedCallback (attribute: string, oldValue: any, newValue: any) {
     // I was going to use this...
@@ -29,6 +43,7 @@ class TinyMceEditor extends HTMLElement {
   };
 
   connectedCallback () {
+    this._form = this.closest("form");
     // TBD
     if (this.getAttribute('init') === 'false') {
       // don't load yet?
@@ -39,8 +54,11 @@ class TinyMceEditor extends HTMLElement {
         target: this._target,
         setup: (editor: any) => {
           this._editor = editor;
-          editor.on('init', (e: any) => {
+          editor.on('init', (e: unknown) => {
             this._initialized = true;
+            if (this._form !== null) {
+              this._form.addEventListener('formdata', this.formDataHandler);
+            }
           });
         }
       };
@@ -51,7 +69,10 @@ class TinyMceEditor extends HTMLElement {
   }
 
   disconnectedCallback () {
-    // TBD
+    if (this._form !== null) {
+      this._form.removeEventListener('formdata', this.formDataHandler);
+      this._form = null;
+    }
   }
 
   get value () {
@@ -63,6 +84,10 @@ class TinyMceEditor extends HTMLElement {
       this._editor.setContent(newValue);
     }
   }
+
+  get form() { return this._form; }
+  get name() { return this.getAttribute('name'); }
+  get type() { return this.localName; }
 
   getTinyMCE () {
     return window.tinymce;
@@ -92,8 +117,11 @@ class TinyMceEditor extends HTMLElement {
         target: this._target,
         setup: (editor: any) => {
           this._editor = editor;
-          editor.on('init', (e: any) => {
+          editor.on('init', (e: unknown) => {
             this._initialized = true;
+            if (this._form !== null) {
+              this._form.addEventListener('formdata', this.formDataHandler);
+            }
           });
         }
       };
