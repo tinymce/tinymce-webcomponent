@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TinyMCE WebComponent Demo Page</title>
+  </head>
+
+  <body>
+	  <h2>TinyMCE Web Component Demo Page</h2>
+    <div id="ephox-ui">
+      <h3>Attribute config</h3>
+      <tinymce-editor
+        config-toolbar="undo redo | bold"
+        config-menubar="false"
+        config-plugins="lists image"
+      ></tinymce-editor>
+      <h3>Lazy</h3>
+      <tinymce-editor
+        id="my-lazy-editor"
+        config-toolbar="bold"
+        config-plugins="image"
+        init="false"
+      ></tinymce-editor>
+      <h3>Default</h3>
+      <tinymce-editor></tinymce-editor>
+    </div>
+  <script src="../../../node_modules/tinymce/tinymce.js"></script>
+  <script src="../../../dist/Editor.js"></script>
+  </body>
+</html>
