@@ -3,12 +3,17 @@ interface Window {
   tinymce: any;
 }
 
+enum Status {
+  Raw,
+  Initializing,
+  Ready
+}
+
 class TinyMceEditor extends HTMLElement {
-  _initialized: boolean;
-  _shadowDom: ShadowRoot;
-  _target: Element;
-  _editor: any;
-  _form: HTMLFormElement | null;
+  private status: Status;
+  private shadowDom: ShadowRoot;
+  private editor: any;
+  private form_: HTMLFormElement | null;
 
   static get formAssociated() {
     return true;
@@ -20,11 +25,9 @@ class TinyMceEditor extends HTMLElement {
 
   constructor() {
     super();
-    this._initialized = false;
-    this._shadowDom = this.attachShadow({mode:'open'});
-    this._target = document.createElement('textarea');
-    this._shadowDom.appendChild(this._target);
-    this._form = null;
+    this.status = Status.Raw;
+    this.shadowDom = this.attachShadow({mode:'open'});
+    this.form_ = null;
   };
 
   private formDataHandler = (evt: Event) => {
@@ -35,65 +38,11 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  attributeChangedCallback (attribute: string, oldValue: any, newValue: any) {
-    // I was going to use this...
-    if (newValue !== oldValue) {
-      console.log('Changed attr: ', attribute);
-    }
-  };
-
-  connectedCallback () {
-    this._form = this.closest("form");
-    // TBD
-    if (this.getAttribute('init') === 'false') {
-      // don't load yet?
-    } else {
-      // load
-      const conf = {
-        ...this.getConfig(),
-        target: this._target,
-        setup: (editor: any) => {
-          this._editor = editor;
-          editor.on('init', (e: unknown) => {
-            this._initialized = true;
-            if (this._form !== null) {
-              this._form.addEventListener('formdata', this.formDataHandler);
-            }
-          });
-        }
-      };
-      console.log(conf);
-      // use target
-      this.getTinyMCE().init(conf);
-    }
-  }
-
-  disconnectedCallback () {
-    if (this._form !== null) {
-      this._form.removeEventListener('formdata', this.formDataHandler);
-      this._form = null;
-    }
-  }
-
-  get value () {
-    return this._initialized ? this._editor.getContent() : undefined;
-  };
-
-  set value (newValue: string) {
-    if (this._initialized) {
-      this._editor.setContent(newValue);
-    }
-  }
-
-  get form() { return this._form; }
-  get name() { return this.getAttribute('name'); }
-  get type() { return this.localName; }
-
-  getTinyMCE () {
+  private getTinyMCE () {
     return window.tinymce;
   };
 
-  getConfig () {
+  private getConfig() {
     const config: {[key: string]: string | Element} = {};
     console.log(this.attributes);
     for (let i = 0; i < this.attributes.length; i++) {
@@ -107,25 +56,71 @@ class TinyMceEditor extends HTMLElement {
     return config;
   }
 
-  init (config: {[key: string]: any}) {
-    if (this._initialized) {
-      throw 'Already initialized';
+  private doInit(extraConfig: Record<string, any> = {}) {
+    this.status = Status.Initializing;
+    // load
+    const target = document.createElement('textarea');
+    target.value = this.innerHTML;
+    this.shadowDom.appendChild(target);
+    const conf = {
+      ...this.getConfig(),
+      ...extraConfig,
+      target,
+      setup: (editor: any) => {
+        this.editor = editor;
+        editor.on('init', (e: unknown) => {
+          this.status = Status.Ready;
+        });
+      }
+    };
+    // use target
+    this.getTinyMCE().init(conf);
+  }
+
+  attributeChangedCallback (attribute: string, oldValue: any, newValue: any) {
+    // I was going to use this...
+    if (newValue !== oldValue) {
+      console.log('Changed attr: ', attribute);
+    }
+  };
+
+  connectedCallback () {
+    this.form_ = this.closest("form");
+    if (this.form_ !== null) {
+      this.form_.addEventListener('formdata', this.formDataHandler);
+    }
+    if (this.getAttribute('init') !== 'false') {
+      this.doInit();
+    }
+  }
+
+  disconnectedCallback () {
+    if (this.form_ !== null) {
+      this.form_.removeEventListener('formdata', this.formDataHandler);
+      this.form_ = null;
+    }
+  }
+
+  get value () {
+    return this.status === Status.Ready ? this.editor.getContent() : undefined;
+  };
+
+  set value (newValue: string) {
+    if (this.status === Status.Ready) {
+      this.editor.setContent(newValue);
+    }
+  }
+
+  get form() { return this.form_; }
+  get name() { return this.getAttribute('name'); }
+  get type() { return this.localName; }
+
+
+  public init (config: Record<string, any>) {
+    if (this.status !== Status.Raw) {
+      throw new Error('Already initialized');
     } else {
-      const fullConfig = {
-        ...config,
-        ...this.getConfig(),
-        target: this._target,
-        setup: (editor: any) => {
-          this._editor = editor;
-          editor.on('init', (e: unknown) => {
-            this._initialized = true;
-            if (this._form !== null) {
-              this._form.addEventListener('formdata', this.formDataHandler);
-            }
-          });
-        }
-      };
-      this.getTinyMCE().init(fullConfig);
+      this.doInit(config);
     }
   };
 }
