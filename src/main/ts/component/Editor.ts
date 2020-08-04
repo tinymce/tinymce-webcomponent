@@ -10,10 +10,10 @@ enum Status {
 }
 
 class TinyMceEditor extends HTMLElement {
-  private status: Status;
-  private shadowDom: ShadowRoot;
-  private editor: any;
-  private form_: HTMLFormElement | null;
+  private _status: Status;
+  private _shadowDom: ShadowRoot;
+  private _editor: any;
+  private _form: HTMLFormElement | null;
 
   static get formAssociated() {
     return true;
@@ -25,12 +25,12 @@ class TinyMceEditor extends HTMLElement {
 
   constructor() {
     super();
-    this.status = Status.Raw;
-    this.shadowDom = this.attachShadow({mode:'open'});
-    this.form_ = null;
+    this._status = Status.Raw;
+    this._shadowDom = this.attachShadow({mode:'open'});
+    this._form = null;
   };
 
-  private formDataHandler = (evt: Event) => {
+  private _formDataHandler = (evt: Event) => {
     const name = this.name;
     if (name !== null) {
       const data = (evt as any).formData as FormData;
@@ -38,11 +38,11 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  private getTinyMCE () {
+  private _getTinyMCE () {
     return window.tinymce;
   };
 
-  private getConfig() {
+  private _getConfig() {
     const config: {[key: string]: string | Element} = {};
     console.log(this.attributes);
     for (let i = 0; i < this.attributes.length; i++) {
@@ -56,25 +56,25 @@ class TinyMceEditor extends HTMLElement {
     return config;
   }
 
-  private doInit(extraConfig: Record<string, any> = {}) {
-    this.status = Status.Initializing;
+  private _doInit(extraConfig: Record<string, any> = {}) {
+    this._status = Status.Initializing;
     // load
     const target = document.createElement('textarea');
     target.value = this.innerHTML;
-    this.shadowDom.appendChild(target);
+    this._shadowDom.appendChild(target);
     const conf = {
-      ...this.getConfig(),
+      ...this._getConfig(),
       ...extraConfig,
       target,
       setup: (editor: any) => {
-        this.editor = editor;
+        this._editor = editor;
         editor.on('init', (e: unknown) => {
-          this.status = Status.Ready;
+          this._status = Status.Ready;
         });
       }
     };
     // use target
-    this.getTinyMCE().init(conf);
+    this._getTinyMCE().init(conf);
   }
 
   attributeChangedCallback (attribute: string, oldValue: any, newValue: any) {
@@ -85,42 +85,42 @@ class TinyMceEditor extends HTMLElement {
   };
 
   connectedCallback () {
-    this.form_ = this.closest("form");
-    if (this.form_ !== null) {
-      this.form_.addEventListener('formdata', this.formDataHandler);
+    this._form = this.closest("form");
+    if (this._form !== null) {
+      this._form.addEventListener('formdata', this._formDataHandler);
     }
     if (this.getAttribute('init') !== 'false') {
-      this.doInit();
+      this._doInit();
     }
   }
 
   disconnectedCallback () {
-    if (this.form_ !== null) {
-      this.form_.removeEventListener('formdata', this.formDataHandler);
-      this.form_ = null;
+    if (this._form !== null) {
+      this._form.removeEventListener('formdata', this._formDataHandler);
+      this._form = null;
     }
   }
 
   get value () {
-    return this.status === Status.Ready ? this.editor.getContent() : undefined;
+    return this._status === Status.Ready ? this._editor.getContent() : undefined;
   };
 
   set value (newValue: string) {
-    if (this.status === Status.Ready) {
-      this.editor.setContent(newValue);
+    if (this._status === Status.Ready) {
+      this._editor.setContent(newValue);
     }
   }
 
-  get form() { return this.form_; }
+  get form() { return this._form; }
   get name() { return this.getAttribute('name'); }
   get type() { return this.localName; }
 
 
   public init (config: Record<string, any>) {
-    if (this.status !== Status.Raw) {
+    if (this._status !== Status.Raw) {
       throw new Error('Already initialized');
     } else {
-      this.doInit(config);
+      this._doInit(config);
     }
   };
 }
