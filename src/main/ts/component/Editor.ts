@@ -60,7 +60,7 @@ class TinyMceEditor extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['disabled'];
+    return ['readonly'];
   };
 
   constructor() {
@@ -97,6 +97,9 @@ class TinyMceEditor extends HTMLElement {
         }
       }
     }
+    if (this.readonly) {
+      config.readonly = true;
+    }
     return config;
   }
 
@@ -118,6 +121,10 @@ class TinyMceEditor extends HTMLElement {
         editor.on('init', (e: unknown) => {
           this._status = Status.Ready;
         });
+        editor.on('SwitchMode', (e: unknown) => {
+          // this assignment ensures the attribute is in sync with the editor
+          this.readonly = this.readonly;
+        });
         if (baseConfig.setup) {
           baseConfig.setup(editor);
         }
@@ -128,9 +135,8 @@ class TinyMceEditor extends HTMLElement {
   }
 
   attributeChangedCallback (attribute: string, oldValue: any, newValue: any) {
-    // I was going to use this...
-    if (newValue !== oldValue) {
-      console.log('Changed attr: ', attribute);
+    if (attribute === 'readonly') {
+      this.readonly = newValue !== null;
     }
   };
 
@@ -158,6 +164,32 @@ class TinyMceEditor extends HTMLElement {
   set value (newValue: string) {
     if (this._status === Status.Ready) {
       this._editor.setContent(newValue);
+    }
+  }
+
+  get readonly () {
+    if (this._editor) {
+      return this._editor.mode.get() === 'readonly';
+    } else {
+      return this.hasAttribute('readonly');
+    }
+  }
+
+  set readonly (value: boolean) {
+    if (value) {
+      if (this._editor && this._editor.mode.get() !== 'readonly') {
+        this._editor.mode.set('readonly');
+      }
+      if (!this.hasAttribute('readonly')) {
+        this.setAttribute('readonly', 'readonly');
+      }
+    } else {
+      if (this._editor && this._editor.mode.get() === 'readonly') {
+        this._editor.mode.set('design');
+      }
+      if (this.hasAttribute('readonly')) {
+        this.removeAttribute('readonly');
+      }
     }
   }
 
