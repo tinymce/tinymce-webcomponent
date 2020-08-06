@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8"/>
     <title>TinyMCE WebComponent Demo Page</title>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   </head>
 
   <body>
@@ -9,16 +11,18 @@
     <div id="ephox-ui">
       <h3>Attribute config</h3>
       <tinymce-editor
-        config-toolbar="undo redo | bold"
-        config-menubar="false"
-        config-plugins="lists image"
+        toolbar="undo redo | bold"
+        menubar="false"
+        plugins="lists image"
+        setup="editors.setupFn"
+        config-init_instance_callback="editors.initFn"
       ></tinymce-editor>
       <h3>Lazy</h3>
       <tinymce-editor
         id="my-lazy-editor"
-        config-toolbar="bold"
-        config-plugins="image"
         init="false"
+        toolbar="bold"
+        plugins="image"
       ></tinymce-editor>
       <h3>Default</h3>
       <tinymce-editor>
@@ -26,6 +30,18 @@
         <p>Jumps over the <i>lazy</i> dog.</p>
       </tinymce-editor>
     </div>
+  <script>
+    (function() {
+      var editors = {};
+      editors.setupFn = function(editor) {
+        console.log("Setup");
+      };
+      editors.initFn = function(editor) {
+        console.log("Init");
+      };
+      window['editors'] = editors;
+    })();
+  </script>
   <script src="../../../node_modules/tinymce/tinymce.js"></script>
   <script src="../../../dist/Editor.js"></script>
   </body>

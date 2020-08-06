@@ -1,4 +1,3 @@
-
 interface Window {
   tinymce: any;
 }
@@ -8,6 +7,26 @@ enum Status {
   Initializing,
   Ready
 }
+
+const path = function (parts: string[]) {
+  let o = window as any;
+  for (let i = 0; i < parts.length && o !== undefined && o !== null; ++i) {
+    o = o[parts[i]];
+  }
+  return o;
+};
+
+const resolveGlobal = function (p: string) {
+  const parts = p.split('.');
+  return path(parts);
+};
+
+const parseJsonResolveGlobals = (value: string): any => {
+  try {
+    return JSON.parse(value);
+  } catch(e) { /* ignore */ }
+  return resolveGlobal(value);
+};
 
 class TinyMceEditor extends HTMLElement {
   private _status: Status;
@@ -43,14 +62,16 @@ class TinyMceEditor extends HTMLElement {
   };
 
   private _getConfig() {
-    const config: {[key: string]: string | Element} = {};
-    console.log(this.attributes);
+
+    const config: Record<string, any> = {};
     for (let i = 0; i < this.attributes.length; i++) {
       const attr = this.attributes.item(i);
-      if (attr?.name.startsWith('config-')) {
-        // add to config
-        const prop = attr.name.substr('config-'.length);
-        config[prop] = attr.value;
+      if (attr !== null) {
+        if (attr.name.startsWith('config-')) {
+          // add to config
+          const prop = attr.name.substr('config-'.length);
+          config[prop] = parseJsonResolveGlobals(attr.value);
+        }
       }
     }
     return config;
@@ -62,15 +83,21 @@ class TinyMceEditor extends HTMLElement {
     const target = document.createElement('textarea');
     target.value = this.innerHTML;
     this._shadowDom.appendChild(target);
-    const conf = {
+    const baseConfig = {
       ...this._getConfig(),
       ...extraConfig,
+    }
+    const conf = {
+      ...baseConfig,
       target,
       setup: (editor: any) => {
         this._editor = editor;
         editor.on('init', (e: unknown) => {
           this._status = Status.Ready;
         });
+        if (baseConfig.setup) {
+          baseConfig.setup(editor);
+        }
       }
     };
     // use target
