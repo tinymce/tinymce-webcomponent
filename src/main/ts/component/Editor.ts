@@ -28,6 +28,27 @@ const parseJsonResolveGlobals = (value: string): any => {
   return resolveGlobal(value);
 };
 
+const identity = <T> (a: T): T => a;
+
+const configAttributes: Record<string, (v: string) => string> = {
+  toolbar: identity,
+  menubar: identity,
+  plugins: identity,
+  content_css: identity,
+  content_style: identity,
+  width: identity,
+  height: identity,
+  toolbar_mode: identity,
+  contextmenu: identity,
+  quickbars_insert_toolbar: identity,
+  quickbars_selection_toolbar: identity,
+  powerpaste_word_import: identity,
+  powerpaste_html_import: identity,
+  powerpaste_allow_local_images: identity,
+  resize: identity,
+  setup: resolveGlobal
+};
+
 class TinyMceEditor extends HTMLElement {
   private _status: Status;
   private _shadowDom: ShadowRoot;
@@ -71,6 +92,8 @@ class TinyMceEditor extends HTMLElement {
           // add to config
           const prop = attr.name.substr('config-'.length);
           config[prop] = parseJsonResolveGlobals(attr.value);
+        } else if (Object.prototype.hasOwnProperty.call(configAttributes, attr.name)) {
+          config[attr.name] = configAttributes[attr.name](attr.value);
         }
       }
     }
