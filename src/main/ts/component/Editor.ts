@@ -181,7 +181,7 @@ class TinyMceEditor extends HTMLElement {
         this._editor.mode.set('readonly');
       }
       if (!this.hasAttribute('readonly')) {
-        this.setAttribute('readonly', 'readonly');
+        this.setAttribute('readonly', '');
       }
     } else {
       if (this._editor && this._editor.mode.get() === 'readonly') {
