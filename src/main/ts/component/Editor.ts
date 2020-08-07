@@ -8,6 +8,10 @@ enum Status {
   Ready
 }
 
+const objHas = function(obj: object, key: string) {
+  return Object.prototype.hasOwnProperty.call(obj, key);
+}
+
 const path = function (parts: string[]) {
   let o = window as any;
   for (let i = 0; i < parts.length && o !== undefined && o !== null; ++i) {
@@ -30,23 +34,30 @@ const parseJsonResolveGlobals = (value: string): any => {
 
 const identity = <T> (a: T): T => a;
 
-const configAttributes: Record<string, (v: string) => string> = {
-  toolbar: identity,
-  menubar: identity,
-  plugins: identity,
-  content_css: identity,
-  content_style: identity,
-  width: identity,
-  height: identity,
-  toolbar_mode: identity,
-  contextmenu: identity,
-  quickbars_insert_toolbar: identity,
-  quickbars_selection_toolbar: identity,
-  powerpaste_word_import: identity,
-  powerpaste_html_import: identity,
-  powerpaste_allow_local_images: identity,
-  resize: identity,
-  setup: resolveGlobal
+const numberOrString = (value: string) => /^\d+$/.test(value) ? Number.parseInt(value, 10) : value
+
+const lookup = (values: Record<string, any>) => (key: string) => objHas(values, key) ? values[key] : key;
+
+const configAttributes: Record<string, (v: string) => unknown> = {
+  toolbar: lookup({ 'false': false }), // string or false
+  menubar: lookup({ 'false': false }), // string or false
+  plugins: identity, // string
+  content_css: identity, // 'default', 'dark', 'document', 'writer', or a path to a css file
+  content_style: identity, // string
+  width: numberOrString, // integer or string
+  height: numberOrString, // integer or string
+  toolbar_mode: identity, // 'floating', 'sliding', 'scrolling', or 'wrap'
+  contextmenu: lookup({ 'false': false }), // string or false
+  quickbars_insert_toolbar: lookup({ 'false': false }), // string or false
+  quickbars_selection_toolbar: lookup({ 'false': false }), // string or false
+  powerpaste_word_import: identity, // 'clean', 'merge', or 'prompt'
+  powerpaste_html_import: identity, // 'clean', 'merge', or 'prompt'
+  powerpaste_allow_local_images: lookup({ 'true': true, 'false': false }), // boolean
+  resize: lookup({ 'true': true, 'false': false, 'both': 'both' }), // boolean or 'both'
+  setup: resolveGlobal // function
+};
+
+const configRenames: Record<string, string> = {
 };
 
 class TinyMceEditor extends HTMLElement {
@@ -60,7 +71,7 @@ class TinyMceEditor extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['readonly'];
+    return ['readonly', 'autofocus', 'placeholder'];
   };
 
   constructor() {
@@ -84,7 +95,7 @@ class TinyMceEditor extends HTMLElement {
 
   private _getConfig() {
 
-    const config: Record<string, any> = {};
+    const config: Record<string, unknown> = {};
     for (let i = 0; i < this.attributes.length; i++) {
       const attr = this.attributes.item(i);
       if (attr !== null) {
@@ -92,22 +103,29 @@ class TinyMceEditor extends HTMLElement {
           // add to config
           const prop = attr.name.substr('config-'.length);
           config[prop] = parseJsonResolveGlobals(attr.value);
-        } else if (Object.prototype.hasOwnProperty.call(configAttributes, attr.name)) {
-          config[attr.name] = configAttributes[attr.name](attr.value);
+        } else if (objHas(configAttributes, attr.name)) {
+          const prop = objHas(configRenames, attr.name) ? configRenames[attr.name] : attr.name;
+          config[prop] = configAttributes[attr.name](attr.value);
         }
       }
     }
     if (this.readonly) {
       config.readonly = true;
     }
+    if (this.autofocus) {
+      config['auto_focus'] = true;
+    }
     return config;
   }
 
-  private _doInit(extraConfig: Record<string, any> = {}) {
+  private _doInit(extraConfig: Record<string, unknown> = {}) {
     this._status = Status.Initializing;
     // load
     const target = document.createElement('textarea');
     target.value = this.innerHTML;
+    if (this.placeholder !== null) {
+      target.placeholder = this.placeholder;
+    }
     this._shadowDom.appendChild(target);
     const baseConfig = {
       ...this._getConfig(),
@@ -125,7 +143,7 @@ class TinyMceEditor extends HTMLElement {
           // this assignment ensures the attribute is in sync with the editor
           this.readonly = this.readonly;
         });
-        if (baseConfig.setup) {
+        if (typeof baseConfig.setup === 'function') {
           baseConfig.setup(editor);
         }
       }
@@ -135,8 +153,14 @@ class TinyMceEditor extends HTMLElement {
   }
 
   attributeChangedCallback (attribute: string, oldValue: any, newValue: any) {
-    if (attribute === 'readonly') {
-      this.readonly = newValue !== null;
+    if (oldValue !== newValue) {
+      if (attribute === 'readonly') {
+        this.readonly = newValue !== null;
+      } else if (attribute === 'autofocus') {
+        this.autofocus = newValue !== null;
+      } else if (attribute === 'placeholder') {
+        this.placeholder = newValue;
+      }
     }
   };
 
@@ -189,6 +213,48 @@ class TinyMceEditor extends HTMLElement {
       }
       if (this.hasAttribute('readonly')) {
         this.removeAttribute('readonly');
+      }
+    }
+  }
+
+  get placeholder () {
+    return this.getAttribute('placeholder');
+  }
+
+  set placeholder (value: string | null) {
+    if (this._editor) {
+      const target: HTMLTextAreaElement = this._editor.getElement();
+      if (target !== null) {
+        if (value !== null) {
+          target.setAttribute('placeholder', value);
+        } else {
+          target.removeAttribute('placeholder');
+        }
+      }
+    }
+    if (value !== null) {
+      if (this.getAttribute('placeholder') !== value) {
+        this.setAttribute('placeholder', value);
+      }
+    } else {
+      if (this.hasAttribute('placeholder')) {
+        this.removeAttribute('placeholder');
+      }
+    }
+  }
+
+  get autofocus () {
+    return this.hasAttribute('autofocus');
+  }
+
+  set autofocus (value: boolean) {
+    if (value) {
+      if (!this.hasAttribute('autofocus')) {
+        this.setAttribute('autofocus', '');
+      }
+    } else {
+      if (this.hasAttribute('autofocus')) {
+        this.removeAttribute('autofocus');
       }
     }
   }
