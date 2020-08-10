@@ -1,4 +1,5 @@
 import { Resolve, Obj, Fun, Global } from '@ephox/katamari';
+import { ScriptLoader } from '../utils/ScriptLoader';
 
 enum Status {
   Raw,
@@ -135,7 +136,7 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  private _getTinyMCE () {
+  private _getTinymce () {
     return Global.tinymce;
   };
 
@@ -213,7 +214,30 @@ class TinyMceEditor extends HTMLElement {
       }
     };
     // use target
-    this._getTinyMCE().init(conf);
+    this._getTinymce().init(conf);
+  }
+
+  private _getTinymceSrc() {
+    const src = this.getAttribute('src');
+    if (src) {
+      return src;
+    }
+    const channel = this.getAttribute('channel') ?? '5-stable';
+    const apiKey = this.hasAttribute('api-key') ? this.getAttribute('api-key') : 'no-api-key';
+    return `https://cdn.tiny.cloud/1/${apiKey}/tinymce/${channel}/tinymce.min.js`;
+    
+  }
+
+  private _loadTinyDoInit(extraConfig?: Record<string, unknown>) {
+    if (this._getTinymce()) {
+      this._doInit(extraConfig);
+    } else {
+      ScriptLoader.load(
+        this.ownerDocument,
+        this._getTinymceSrc(),
+        () => this._doInit(extraConfig)
+      );
+    }
   }
 
   attributeChangedCallback (attribute: string, oldValue: any, newValue: any) {
@@ -237,7 +261,7 @@ class TinyMceEditor extends HTMLElement {
     this._mutationObserver.observe(this, { attributes: true, childList: false, subtree: false });
     this._updateForm();
     if (this.getAttribute('init') !== 'false') {
-      this._doInit();
+      this._loadTinyDoInit();
     }
   }
 
@@ -333,7 +357,7 @@ class TinyMceEditor extends HTMLElement {
     if (this._status !== Status.Raw) {
       throw new Error('Already initialized');
     } else {
-      this._doInit(config);
+      this._loadTinyDoInit(config);
     }
   };
 }
