@@ -16,8 +16,9 @@ const page = (post) => {
       <h3>Posted Content</h3>
       <div style="border: 1px solid black">${post}</div>
       <h3>Editor</h3>
-      <form method="POST" action="/">
-        <tinymce-editor name="content"></tinymce-editor>
+      <tinymce-editor name="content" form="myform"></tinymce-editor>
+      <h3>Form</h3>
+      <form id="myform" method="POST" action="/">
         <input type="submit" value="Submit">
       </form>
       <script src="/tinymce/tinymce.js"></script>

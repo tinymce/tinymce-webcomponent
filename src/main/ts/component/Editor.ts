@@ -89,7 +89,7 @@ class TinyMceEditor extends HTMLElement {
      'onObjectSelected', 'onSetContent', 'onShow', 'onSubmit', 'onUndo',
      'onVisualAid'];
 
-    return ['readonly', 'autofocus', 'placeholder'].concat(nativeEvents).concat(tinyEvents);
+    return ['form', 'readonly', 'autofocus', 'placeholder'].concat(nativeEvents).concat(tinyEvents);
   };
 
   constructor() {
@@ -131,6 +131,27 @@ class TinyMceEditor extends HTMLElement {
         this._eventHandlers[event] = handler;
       } else {
         delete this._eventHandlers[event];
+      }
+    }
+  }
+
+  private _updateForm () {
+    if (this.isConnected) {
+      const formId = this.getAttribute('form');
+      const form = formId !== null ? this.ownerDocument.querySelector<HTMLFormElement>('form#' +formId) : this.closest('form');
+      if (this._form !== form) {
+        if (this._form !== null) {
+          this._form.removeEventListener('formdata', this._formDataHandler);
+        }
+        this._form = form;
+        if (this._form !== null) {
+          this._form.addEventListener('formdata', this._formDataHandler);
+        }
+      }
+    } else {
+      if (this._form !== null) {
+        this._form.removeEventListener('formdata', this._formDataHandler);
+        this._form = null;
       }
     }
   }
@@ -218,7 +239,9 @@ class TinyMceEditor extends HTMLElement {
 
   attributeChangedCallback (attribute: string, oldValue: any, newValue: any) {
     if (oldValue !== newValue) {
-      if (attribute === 'readonly') {
+      if (attribute === 'form') {
+        this._updateForm();
+      } else if (attribute === 'readonly') {
         this.readonly = newValue !== null;
       } else if (attribute === 'autofocus') {
         this.autofocus = newValue !== null;
@@ -233,10 +256,7 @@ class TinyMceEditor extends HTMLElement {
   connectedCallback () {
     this._eventHandlers = this._getEventHandlers();
     this._mutationObserver.observe(this, { attributes: true, childList: false, subtree: false });
-    this._form = this.closest("form");
-    if (this._form !== null) {
-      this._form.addEventListener('formdata', this._formDataHandler);
-    }
+    this._updateForm();
     if (this.getAttribute('init') !== 'false') {
       this._doInit();
     }
@@ -244,10 +264,7 @@ class TinyMceEditor extends HTMLElement {
 
   disconnectedCallback () {
     this._mutationObserver.disconnect();
-    if (this._form !== null) {
-      this._form.removeEventListener('formdata', this._formDataHandler);
-      this._form = null;
-    }
+    this._updateForm();
   }
 
   get value () {
