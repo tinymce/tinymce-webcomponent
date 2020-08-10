@@ -1,8 +1,9 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "outDir": "./dist/",
+    "outDir": "./lib/",
     "baseUrl": ".",
+    "rootDir": "src",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",

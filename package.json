@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc -p ./tsconfig.json",
+    "build": "tsc -p ./tsconfig.json && rollup -c rollup.config.js",
     "serve": "node src/demo/js/server.js"
   },
   "keywords": [
@@ -16,6 +16,7 @@
   "license": "ISC",
   "devDependencies": {
     "express": "^4.17.1",
+    "rollup": "^2.23.1",
     "tinymce": "npm:tinymce@^5.4.0",
     "ts-loader": "^8.0.1",
     "typescript": "^3.9.7"
