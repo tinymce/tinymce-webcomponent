@@ -1,6 +1,4 @@
-interface Window {
-  tinymce: any;
-}
+import { Resolve, Obj, Fun, Global } from '@ephox/katamari';
 
 enum Status {
   Raw,
@@ -8,53 +6,34 @@ enum Status {
   Ready
 }
 
-const objHas = function(obj: object, key: string) {
-  return Object.prototype.hasOwnProperty.call(obj, key);
-}
-
-const path = function (parts: string[]) {
-  let o = window as any;
-  for (let i = 0; i < parts.length && o !== undefined && o !== null; ++i) {
-    o = o[parts[i]];
-  }
-  return o;
-};
-
-const resolveGlobal = function (p: string) {
-  const parts = p.split('.');
-  return path(parts);
-};
-
 const parseJsonResolveGlobals = (value: string): any => {
   try {
     return JSON.parse(value);
   } catch(e) { /* ignore */ }
-  return resolveGlobal(value);
+  return Resolve.resolve(value);
 };
-
-const identity = <T> (a: T): T => a;
 
 const numberOrString = (value: string) => /^\d+$/.test(value) ? Number.parseInt(value, 10) : value
 
-const lookup = (values: Record<string, any>) => (key: string) => objHas(values, key) ? values[key] : key;
+const lookup = (values: Record<string, any>) => (key: string) => Obj.has(values, key) ? values[key] : key;
 
 const configAttributes: Record<string, (v: string) => unknown> = {
   toolbar: lookup({ 'false': false }), // string or false
   menubar: lookup({ 'false': false }), // string or false
-  plugins: identity, // string
-  content_css: identity, // 'default', 'dark', 'document', 'writer', or a path to a css file
-  content_style: identity, // string
+  plugins: Fun.identity, // string
+  content_css: Fun.identity, // 'default', 'dark', 'document', 'writer', or a path to a css file
+  content_style: Fun.identity, // string
   width: numberOrString, // integer or string
   height: numberOrString, // integer or string
-  toolbar_mode: identity, // 'floating', 'sliding', 'scrolling', or 'wrap'
+  toolbar_mode: Fun.identity, // 'floating', 'sliding', 'scrolling', or 'wrap'
   contextmenu: lookup({ 'false': false }), // string or false
   quickbars_insert_toolbar: lookup({ 'false': false }), // string or false
   quickbars_selection_toolbar: lookup({ 'false': false }), // string or false
-  powerpaste_word_import: identity, // 'clean', 'merge', or 'prompt'
-  powerpaste_html_import: identity, // 'clean', 'merge', or 'prompt'
+  powerpaste_word_import: Fun.identity, // 'clean', 'merge', or 'prompt'
+  powerpaste_html_import: Fun.identity, // 'clean', 'merge', or 'prompt'
   powerpaste_allow_local_images: lookup({ 'true': true, 'false': false }), // boolean
   resize: lookup({ 'true': true, 'false': false, 'both': 'both' }), // boolean or 'both'
-  setup: resolveGlobal // function
+  setup: Resolve.resolve // function
 };
 
 const configRenames: Record<string, string> = {
@@ -119,7 +98,7 @@ class TinyMceEditor extends HTMLElement {
 
   private _updateEventAttr (attrKey: string, attrValue: string | null) {
     const event = attrKey.substring('on'.length).toLowerCase();
-    const handler = attrValue !== null ? resolveGlobal(attrValue) : undefined;
+    const handler = attrValue !== null ? Resolve.resolve(attrValue) : undefined;
     if (this._eventHandlers[event] !== handler) {
       if (this._editor && this._eventHandlers[event]) {
         this._editor.off(event, this._eventHandlers[event]);
@@ -157,7 +136,7 @@ class TinyMceEditor extends HTMLElement {
   }
 
   private _getTinyMCE () {
-    return window.tinymce;
+    return Global.tinymce;
   };
 
   private _getConfig() {
@@ -170,8 +149,8 @@ class TinyMceEditor extends HTMLElement {
           // add to config
           const prop = attr.name.substr('config-'.length);
           config[prop] = parseJsonResolveGlobals(attr.value);
-        } else if (objHas(configAttributes, attr.name)) {
-          const prop = objHas(configRenames, attr.name) ? configRenames[attr.name] : attr.name;
+        } else if (Obj.has(configAttributes, attr.name)) {
+          const prop = Obj.has(configRenames, attr.name) ? configRenames[attr.name] : attr.name;
           config[prop] = configAttributes[attr.name](attr.value);
         }
       }
@@ -192,7 +171,7 @@ class TinyMceEditor extends HTMLElement {
       if (attr !== null) {
         if (attr.name.toLowerCase().startsWith('on')) {
           const event = attr.name.toLowerCase().substr('on'.length);
-          const handler = resolveGlobal(attr.value);
+          const handler = Resolve.resolve(attr.value);
           handlers[event] = handler;
         }
       }
