@@ -65,13 +65,31 @@ class TinyMceEditor extends HTMLElement {
   private _shadowDom: ShadowRoot;
   private _editor: any;
   private _form: HTMLFormElement | null;
+  private _eventHandlers: Record<string, any>;
+  private _mutationObserver: MutationObserver;
 
   static get formAssociated() {
     return true;
   }
 
   static get observedAttributes() {
-    return ['readonly', 'autofocus', 'placeholder'];
+    const nativeEvents = ['onBeforePaste', 'onBlur', 'onClick', 'onContextMenu',
+     'onCopy', 'onCut', 'onDblclick', 'onDrag', 'onDragDrop', 'onDragEnd',
+     'onDragGesture', 'onDragOver', 'onDrop', 'onFocus', 'onFocusIn',
+     'onFocusOut', 'onKeyDown', 'onKeyPress', 'onKeyUp', 'onMouseDown',
+     'onMouseEnter', 'onMouseLeave', 'onMouseMove', 'onMouseOut', 'onMouseOver',
+     'onMouseUp', 'onPaste', 'onSelectionChange'];
+    const tinyEvents = ['onActivate', 'onAddUndo', 'onBeforeAddUndo',
+     'onBeforeExecCommand', 'onBeforeGetContent', 'onBeforeRenderUI',
+     'onBeforeSetContent', 'onChange', 'onClearUndos', 'onDeactivate',
+     'onDirty', 'onExecCommand', 'onGetContent', 'onHide', 'onInit',
+     'onLoadContent', 'onNodeChange', 'onPostProcess', 'onPostRender',
+     'onPreProcess', 'onProgressState', 'onRedo', 'onRemove', 'onReset',
+     'onSaveContent', 'onSetAttrib', 'onObjectResizeStart', 'onObjectResized',
+     'onObjectSelected', 'onSetContent', 'onShow', 'onSubmit', 'onUndo',
+     'onVisualAid'];
+
+    return ['readonly', 'autofocus', 'placeholder'].concat(nativeEvents).concat(tinyEvents);
   };
 
   constructor() {
@@ -79,13 +97,41 @@ class TinyMceEditor extends HTMLElement {
     this._status = Status.Raw;
     this._shadowDom = this.attachShadow({mode:'open'});
     this._form = null;
+    this._eventHandlers = {};
+    this._mutationObserver = new MutationObserver(this._eventAttrHandler);
   };
+
+  private _eventAttrHandler: MutationCallback = (records) => {
+    records.forEach((record) => {
+      if (record.type === 'attributes' && record.target === this && record.attributeName?.toLowerCase().startsWith('on')) {
+        this._updateEventAttr(record.attributeName, this.getAttribute(record.attributeName));
+      }
+    });
+  }
 
   private _formDataHandler = (evt: Event) => {
     const name = this.name;
     if (name !== null) {
       const data = (evt as any).formData as FormData;
       data.append(name, this.value);
+    }
+  }
+
+  private _updateEventAttr (attrKey: string, attrValue: string | null) {
+    const event = attrKey.substring('on'.length).toLowerCase();
+    const handler = attrValue !== null ? resolveGlobal(attrValue) : undefined;
+    if (this._eventHandlers[event] !== handler) {
+      if (this._editor && this._eventHandlers[event]) {
+        this._editor.off(event, this._eventHandlers[event]);
+      }
+      if (handler) {
+        if (this._editor) {
+          this._editor.on(event, handler);
+        }
+        this._eventHandlers[event] = handler;
+      } else {
+        delete this._eventHandlers[event];
+      }
     }
   }
 
@@ -118,6 +164,21 @@ class TinyMceEditor extends HTMLElement {
     return config;
   }
 
+  private _getEventHandlers() {
+    const handlers: Record<string, any> = {};
+    for (let i = 0; i < this.attributes.length; i++) {
+      const attr = this.attributes.item(i);
+      if (attr !== null) {
+        if (attr.name.toLowerCase().startsWith('on')) {
+          const event = attr.name.toLowerCase().substr('on'.length);
+          const handler = resolveGlobal(attr.value);
+          handlers[event] = handler;
+        }
+      }
+    }
+    return handlers;
+  }
+
   private _doInit(extraConfig: Record<string, unknown> = {}) {
     this._status = Status.Initializing;
     // load
@@ -143,6 +204,9 @@ class TinyMceEditor extends HTMLElement {
           // this assignment ensures the attribute is in sync with the editor
           this.readonly = this.readonly;
         });
+        Object.keys(this._eventHandlers).forEach((event) => {
+          editor.on(event, this._eventHandlers[event]);
+        });
         if (typeof baseConfig.setup === 'function') {
           baseConfig.setup(editor);
         }
@@ -160,11 +224,15 @@ class TinyMceEditor extends HTMLElement {
         this.autofocus = newValue !== null;
       } else if (attribute === 'placeholder') {
         this.placeholder = newValue;
+      } else if (attribute.toLowerCase().startsWith('on')) {
+        this._updateEventAttr(attribute, newValue);
       }
     }
   };
 
   connectedCallback () {
+    this._eventHandlers = this._getEventHandlers();
+    this._mutationObserver.observe(this, { attributes: true, childList: false, subtree: false });
     this._form = this.closest("form");
     if (this._form !== null) {
       this._form.addEventListener('formdata', this._formDataHandler);
@@ -175,6 +243,7 @@ class TinyMceEditor extends HTMLElement {
   }
 
   disconnectedCallback () {
+    this._mutationObserver.disconnect();
     if (this._form !== null) {
       this._form.removeEventListener('formdata', this._formDataHandler);
       this._form = null;

@@ -15,6 +15,7 @@
         menubar="false"
         plugins="lists image"
         setup="editors.setupFn"
+        onChange="editors.changeFn"
         config-init_instance_callback="editors.initFn"
       ></tinymce-editor>
       <h3>Lazy</h3>
@@ -38,6 +39,9 @@
       };
       editors.initFn = function(editor) {
         console.log("Init");
+      };
+      editors.changeFn = function(evt) {
+        console.log('change', evt);
       };
       window['editors'] = editors;
     })();
