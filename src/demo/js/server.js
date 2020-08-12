@@ -22,7 +22,7 @@ const page = (post) => {
         <input type="submit" value="Submit">
       </form>
       <script src="/tinymce/tinymce.js"></script>
-      <script src="/dist/Editor.js"></script>
+      <script src="/dist/tinymce-wc.js"></script>
     </body>
   </html>
   `;
@@ -45,4 +45,4 @@ app.post('/', function(request, response) {
   response.send(page(request.body.content))
 });
 
-app.listen(3000, () => console.log('Listening on port 3000'));
+app.listen(3000, () => console.log('http://localhost:3000/'));

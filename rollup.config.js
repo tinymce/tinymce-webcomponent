@@ -3,7 +3,7 @@ const swag = require('@ephox/swag');
 export default {
   input: 'lib/main/ts/component/Editor.js',
   output: {
-    file: 'dist/tinymce-webcomponent.js',
+    file: 'dist/tinymce-wc.js',
     format: 'iife'
   },
   treeshake: true,

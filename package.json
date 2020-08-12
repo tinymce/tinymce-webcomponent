@@ -1,8 +1,8 @@
 {
-  "name": "tinymce-wc",
+  "name": "@tinymce/tinymce-wc",
   "version": "1.0.0",
-  "description": "TinyMCE web-component wrapper",
-  "main": "index.js",
+  "description": "Official TinyMCE web-component",
+  "main": "dist/tinymce-wc.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -p ./tsconfig.json && rollup -c rollup.config.js",
