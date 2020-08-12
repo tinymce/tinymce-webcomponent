@@ -184,7 +184,7 @@ class TinyMceEditor extends HTMLElement {
     this._status = Status.Initializing;
     // load
     const target = document.createElement('textarea');
-    target.value = this.innerHTML;
+    target.value = this.textContent ?? "";
     if (this.placeholder !== null) {
       target.placeholder = this.placeholder;
     }
