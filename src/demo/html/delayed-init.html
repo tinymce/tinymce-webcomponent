@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>TinyMCE WebComponent Delayed Init Demo Page</title>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  </head>
+
+  <body>
+  <h1>TinyMCE Web Component Delayed Init Demo Page</h1>
+  <tinymce-editor
+   id="editor" 
+   init="false"
+   toolbar="bold italic underline"
+   >
+    &lt;p&gt;The quick brown fox jumps over the lazy dog.&lt;/p&gt;
+  </tinymce-editor>
+  <script src="../../../node_modules/tinymce/tinymce.js"></script>
+  <script src="../../../dist/tinymce-wc.js"></script>
+  </body>
+</html>

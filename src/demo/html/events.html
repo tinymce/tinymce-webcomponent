@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>TinyMCE WebComponent Events Demo Page</title>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <script>
+      (function() {
+        var editors = {};
+        editors.setupFn = function(editor) {
+          console.log("Setup");
+        };
+        editors.initFn = function(editor) {
+          console.log("Init");
+        };
+        editors.changeFn = function(evt) {
+          console.log('change', evt);
+        };
+        editors.clickFn = function(evt) {
+          console.log('click', evt);
+        };
+        window['editors'] = editors;
+      })();
+    </script>
+  </head>
+
+  <body>
+  <h1>TinyMCE Web Component Events Demo Page</h1>
+  <tinymce-editor
+    setup="editors.setupFn"
+    onInit="editors.initFn"
+    onChange="editors.changeFn"
+    onClick="editors.clickFn"
+  ></tinymce-editor>
+  <script src="../../../node_modules/tinymce/tinymce.js"></script>
+  <script src="../../../dist/tinymce-wc.js"></script>
+  </body>
+</html>
