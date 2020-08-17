@@ -15,15 +15,8 @@
         menubar="false"
         plugins="lists image"
         setup="editors.setupFn"
-        onChange="editors.changeFn"
-        config-init_instance_callback="editors.initFn"
-      ></tinymce-editor>
-      <h3>Lazy</h3>
-      <tinymce-editor
-        id="my-lazy-editor"
-        init="false"
-        toolbar="bold"
-        plugins="image"
+        on-change="editors.changeFn"
+        on-init="editors.initFn"
       ></tinymce-editor>
       <h3>Default with readonly</h3>
       <tinymce-editor readonly>

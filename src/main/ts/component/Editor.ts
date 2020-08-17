@@ -1,6 +1,10 @@
 import { Resolve, Obj, Fun, Global } from '@ephox/katamari';
 import { ScriptLoader } from '../utils/ScriptLoader';
 
+// the advanced config will accept any attributes that start with `config-`
+// and try to parse them as JSON or resolve them on the Global state.
+const ADVANCED_CONFIG = false;
+
 enum Status {
   Raw,
   Initializing,
@@ -13,28 +17,41 @@ const parseJsonResolveGlobals = (value: string): any => {
   } catch(e) { /* ignore */ }
   return Resolve.resolve(value);
 };
-
-const numberOrString = (value: string) => /^\d+$/.test(value) ? Number.parseInt(value, 10) : value
-
 const lookup = (values: Record<string, any>) => (key: string) => Obj.has(values, key) ? values[key] : key;
 
+const parseGlobal = Resolve.resolve;
+const parseString = Fun.identity;
+const parseFalseOrString = lookup({ 'false': false });
+const parseBooleanOrString = lookup({ 'true': true, 'false': false });
+const parseNumberOrString = (value: string) => /^\d+$/.test(value) ? Number.parseInt(value, 10) : value
+
+
 const configAttributes: Record<string, (v: string) => unknown> = {
-  toolbar: lookup({ 'false': false }), // string or false
-  menubar: lookup({ 'false': false }), // string or false
-  plugins: Fun.identity, // string
-  content_css: Fun.identity, // 'default', 'dark', 'document', 'writer', or a path to a css file
-  content_style: Fun.identity, // string
-  width: numberOrString, // integer or string
-  height: numberOrString, // integer or string
-  toolbar_mode: Fun.identity, // 'floating', 'sliding', 'scrolling', or 'wrap'
-  contextmenu: lookup({ 'false': false }), // string or false
-  quickbars_insert_toolbar: lookup({ 'false': false }), // string or false
-  quickbars_selection_toolbar: lookup({ 'false': false }), // string or false
-  powerpaste_word_import: Fun.identity, // 'clean', 'merge', or 'prompt'
-  powerpaste_html_import: Fun.identity, // 'clean', 'merge', or 'prompt'
-  powerpaste_allow_local_images: lookup({ 'true': true, 'false': false }), // boolean
-  resize: lookup({ 'true': true, 'false': false, 'both': 'both' }), // boolean or 'both'
-  setup: Resolve.resolve // function
+  setup: parseGlobal, // function
+  toolbar: parseFalseOrString, // string or false
+  menubar: parseFalseOrString, // string or false
+  plugins: parseString, // string
+  content_css: parseString, // 'default', 'dark', 'document', 'writer', or a path to a css file
+  content_style: parseString, // string
+  width: parseNumberOrString, // integer or string
+  height: parseNumberOrString, // integer or string
+  toolbar_mode: parseString, // 'floating', 'sliding', 'scrolling', or 'wrap'
+  contextmenu: parseFalseOrString, // string or false
+  quickbars_insert_toolbar: parseFalseOrString, // string or false
+  quickbars_selection_toolbar: parseFalseOrString, // string or false
+  powerpaste_word_import: parseString, // 'clean', 'merge', or 'prompt'
+  powerpaste_html_import: parseString, // 'clean', 'merge', or 'prompt'
+  powerpaste_allow_local_images: parseBooleanOrString, // boolean
+  resize: parseBooleanOrString, // boolean or 'both'
+  skin: parseString, // string
+  skin_url: parseString, // string
+  images_upload_url: parseString, // string
+  images_upload_handler: parseGlobal, // function
+  images_upload_base_path: parseString, // string
+  images_upload_credentials: parseBooleanOrString, // boolean
+  images_reuse_filename: parseBooleanOrString, // boolean
+  icons: parseString, // name of icon pack eg. 'material'
+  icons_url: parseString // url to icon pack js
 };
 
 const configRenames: Record<string, string> = {
@@ -53,21 +70,21 @@ class TinyMceEditor extends HTMLElement {
   }
 
   static get observedAttributes() {
-    const nativeEvents = ['onBeforePaste', 'onBlur', 'onClick', 'onContextMenu',
-     'onCopy', 'onCut', 'onDblclick', 'onDrag', 'onDragDrop', 'onDragEnd',
-     'onDragGesture', 'onDragOver', 'onDrop', 'onFocus', 'onFocusIn',
-     'onFocusOut', 'onKeyDown', 'onKeyPress', 'onKeyUp', 'onMouseDown',
-     'onMouseEnter', 'onMouseLeave', 'onMouseMove', 'onMouseOut', 'onMouseOver',
-     'onMouseUp', 'onPaste', 'onSelectionChange'];
-    const tinyEvents = ['onActivate', 'onAddUndo', 'onBeforeAddUndo',
-     'onBeforeExecCommand', 'onBeforeGetContent', 'onBeforeRenderUI',
-     'onBeforeSetContent', 'onChange', 'onClearUndos', 'onDeactivate',
-     'onDirty', 'onExecCommand', 'onGetContent', 'onHide', 'onInit',
-     'onLoadContent', 'onNodeChange', 'onPostProcess', 'onPostRender',
-     'onPreProcess', 'onProgressState', 'onRedo', 'onRemove', 'onReset',
-     'onSaveContent', 'onSetAttrib', 'onObjectResizeStart', 'onObjectResized',
-     'onObjectSelected', 'onSetContent', 'onShow', 'onSubmit', 'onUndo',
-     'onVisualAid'];
+    const nativeEvents = ['on-BeforePaste', 'on-Blur', 'on-Click', 'on-ContextMenu',
+     'on-Copy', 'on-Cut', 'on-Dblclick', 'on-Drag', 'on-DragDrop', 'on-DragEnd',
+     'on-DragGesture', 'on-DragOver', 'on-Drop', 'on-Focus', 'on-FocusIn',
+     'on-FocusOut', 'on-KeyDown', 'on-KeyPress', 'on-KeyUp', 'on-MouseDown',
+     'on-MouseEnter', 'on-MouseLeave', 'on-MouseMove', 'on-MouseOut', 'on-MouseOver',
+     'on-MouseUp', 'on-Paste', 'on-SelectionChange'];
+    const tinyEvents = ['on-Activate', 'on-AddUndo', 'on-BeforeAddUndo',
+     'on-BeforeExecCommand', 'on-BeforeGetContent', 'on-BeforeRenderUI',
+     'on-BeforeSetContent', 'on-Change', 'on-ClearUndos', 'on-Deactivate',
+     'on-Dirty', 'on-ExecCommand', 'on-GetContent', 'on-Hide', 'on-Init',
+     'on-LoadContent', 'on-NodeChange', 'on-PostProcess', 'on-PostRender',
+     'on-PreProcess', 'on-ProgressState', 'on-Redo', 'on-Remove', 'on-Reset',
+     'on-SaveContent', 'on-SetAttrib', 'on-ObjectResizeStart', 'on-ObjectResized',
+     'on-ObjectSelected', 'on-SetContent', 'on-Show', 'on-Submit', 'on-Undo',
+     'on-VisualAid'];
 
     return ['form', 'readonly', 'autofocus', 'placeholder'].concat(nativeEvents).concat(tinyEvents);
   };
@@ -83,7 +100,7 @@ class TinyMceEditor extends HTMLElement {
 
   private _eventAttrHandler: MutationCallback = (records) => {
     records.forEach((record) => {
-      if (record.type === 'attributes' && record.target === this && record.attributeName?.toLowerCase().startsWith('on')) {
+      if (record.type === 'attributes' && record.target === this && record.attributeName?.toLowerCase().startsWith('on-')) {
         this._updateEventAttr(record.attributeName, this.getAttribute(record.attributeName));
       }
     });
@@ -98,7 +115,7 @@ class TinyMceEditor extends HTMLElement {
   }
 
   private _updateEventAttr (attrKey: string, attrValue: string | null) {
-    const event = attrKey.substring('on'.length).toLowerCase();
+    const event = attrKey.substring('on-'.length).toLowerCase();
     const handler = attrValue !== null ? Resolve.resolve(attrValue) : undefined;
     if (this._eventHandlers[event] !== handler) {
       if (this._editor && this._eventHandlers[event]) {
@@ -141,12 +158,11 @@ class TinyMceEditor extends HTMLElement {
   };
 
   private _getConfig() {
-
-    const config: Record<string, unknown> = {};
+    const config: Record<string, unknown> = parseGlobal(this.getAttribute('config') ?? '') ?? {};
     for (let i = 0; i < this.attributes.length; i++) {
       const attr = this.attributes.item(i);
       if (attr !== null) {
-        if (attr.name.startsWith('config-')) {
+        if (ADVANCED_CONFIG && attr.name.startsWith('config-')) {
           // add to config
           const prop = attr.name.substr('config-'.length);
           config[prop] = parseJsonResolveGlobals(attr.value);
@@ -162,6 +178,8 @@ class TinyMceEditor extends HTMLElement {
     if (this.autofocus) {
       config['auto_focus'] = true;
     }
+    delete config['target'];
+    delete config['selector'];
     return config;
   }
 
@@ -170,8 +188,8 @@ class TinyMceEditor extends HTMLElement {
     for (let i = 0; i < this.attributes.length; i++) {
       const attr = this.attributes.item(i);
       if (attr !== null) {
-        if (attr.name.toLowerCase().startsWith('on')) {
-          const event = attr.name.toLowerCase().substr('on'.length);
+        if (attr.name.toLowerCase().startsWith('on-')) {
+          const event = attr.name.toLowerCase().substr('on-'.length);
           const handler = Resolve.resolve(attr.value);
           handlers[event] = handler;
         }
@@ -180,7 +198,7 @@ class TinyMceEditor extends HTMLElement {
     return handlers;
   }
 
-  private _doInit(extraConfig: Record<string, unknown> = {}) {
+  private _doInit() {
     this._status = Status.Initializing;
     // load
     const target = document.createElement('textarea');
@@ -189,10 +207,7 @@ class TinyMceEditor extends HTMLElement {
       target.placeholder = this.placeholder;
     }
     this._shadowDom.appendChild(target);
-    const baseConfig = {
-      ...this._getConfig(),
-      ...extraConfig,
-    }
+    const baseConfig = this._getConfig();
     const conf = {
       ...baseConfig,
       target,
@@ -228,14 +243,14 @@ class TinyMceEditor extends HTMLElement {
     
   }
 
-  private _loadTinyDoInit(extraConfig?: Record<string, unknown>) {
+  private _loadTinyDoInit() {
     if (this._getTinymce()) {
-      this._doInit(extraConfig);
+      this._doInit();
     } else {
       ScriptLoader.load(
         this.ownerDocument,
         this._getTinymceSrc(),
-        () => this._doInit(extraConfig)
+        () => this._doInit()
       );
     }
   }
@@ -260,7 +275,7 @@ class TinyMceEditor extends HTMLElement {
     this._eventHandlers = this._getEventHandlers();
     this._mutationObserver.observe(this, { attributes: true, childList: false, subtree: false });
     this._updateForm();
-    if (this.getAttribute('init') !== 'false') {
+    if (this._status === Status.Raw) {
       this._loadTinyDoInit();
     }
   }
@@ -351,15 +366,6 @@ class TinyMceEditor extends HTMLElement {
   get form() { return this._form; }
   get name() { return this.getAttribute('name'); }
   get type() { return this.localName; }
-
-
-  public init (config: Record<string, any>) {
-    if (this._status !== Status.Raw) {
-      throw new Error('Already initialized');
-    } else {
-      this._loadTinyDoInit(config);
-    }
-  };
 }
 
 // export default TinyMceEditor;
