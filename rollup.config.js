@@ -1,9 +1,9 @@
 const swag = require('@ephox/swag');
 
 export default {
-  input: 'lib/main/ts/component/Editor.js',
+  input: 'lib/main/ts/Main.js',
   output: {
-    file: 'dist/tinymce-wc.js',
+    file: 'dist/tinymce-webcomponent.js',
     format: 'iife'
   },
   treeshake: true,

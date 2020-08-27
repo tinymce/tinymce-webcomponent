@@ -44,7 +44,7 @@ const page = (editor1Value, editor2Value) => {
       <h3>Editor 2 value</h3>
       <div style="border: 1px solid black">${editor2Value}</div>
       <script src="/tinymce/tinymce.js"></script>
-      <script src="/dist/tinymce-wc.js"></script>
+      <script src="/dist/tinymce-webcomponent.js"></script>
     </body>
   </html>
   `;

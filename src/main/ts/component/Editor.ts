@@ -369,4 +369,6 @@ class TinyMceEditor extends HTMLElement {
 }
 
 // export default TinyMceEditor;
-customElements.define('tinymce-editor', TinyMceEditor);
+export default function() {
+  customElements.define('tinymce-editor', TinyMceEditor);
+}
