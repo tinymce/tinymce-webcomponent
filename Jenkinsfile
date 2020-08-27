@@ -18,8 +18,8 @@ node("primary") {
 
   def permutations = [
     [ name: "win10Chrome", os: "windows-10", browser: "chrome" ],
-    [ name: "win10FF", os: "windows-10", browser: "firefox" ],
-    [ name: "win10Edge", os: "windows-10", browser: "MicrosoftEdge" ]
+    [ name: "win10FF", os: "windows-10", browser: "firefox" ]
+    // [ name: "win10Edge", os: "windows-10", browser: "MicrosoftEdge" ]
   ]
 
   def processes = [:]
