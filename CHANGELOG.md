@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2020-08-31
+### Added
+- Added CDN demo.
+
+### Changed
+- Updated README.md
+
 ## [1.0.0] - 2020-08-27
 ### Added
 - Initial release of web component wrapper around TinyMCE.
