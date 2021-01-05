@@ -1,7 +1,7 @@
 {
   "name": "@tinymce/tinymce-webcomponent",
   "version": "1.0.2",
-  "description": "Official TinyMCE web-component",
+  "description": "Official TinyMCE Web Component",
   "repository": {
     "url": "https://github.com/tinymce/tinymce-webcomponent"
   },
@@ -21,7 +21,7 @@
   },
   "keywords": [
     "TinyMCE",
-    "web-component"
+    "webcomponent"
   ],
   "author": "Tiny Technologies",
   "license": "Apache-2.0",
