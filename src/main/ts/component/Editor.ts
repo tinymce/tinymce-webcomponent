@@ -21,8 +21,8 @@ const lookup = (values: Record<string, any>) => (key: string) => Obj.has(values,
 
 const parseGlobal = Resolve.resolve;
 const parseString = Fun.identity;
-const parseFalseOrString = lookup({ false: false });
-const parseBooleanOrString = lookup({ true: true, false: false });
+const parseFalseOrString = lookup({ 'false': false });
+const parseBooleanOrString = lookup({ 'true': true, 'false': false });
 const parseNumberOrString = (value: string) => /^\d+$/.test(value) ? Number.parseInt(value, 10) : value;
 
 const configAttributes: Record<string, (v: string) => unknown> = {
@@ -374,6 +374,7 @@ class TinyMceEditor extends HTMLElement {
 }
 
 // export default TinyMceEditor;
-export default function () {
+export default () => {
   window.customElements.define('tinymce-editor', TinyMceEditor);
-}
+};
+
