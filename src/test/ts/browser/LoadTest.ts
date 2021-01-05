@@ -1,14 +1,14 @@
 import { Pipeline, Step, Waiter, Assertions } from '@ephox/agar';
-import { Element, Attr, Body, Insert, Remove, SelectorFilter, TextContent } from '@ephox/sugar';
+import { SugarElement, Attribute, SugarBody, Insert, Remove, SelectorFilter, TextContent } from '@ephox/sugar';
 import { UnitTest } from '@ephox/bedrock-client';
 import Editor from '../../../main/ts/component/Editor';
 import { Arr, Global } from '@ephox/katamari';
 
 const makeTinymceElement = (attrs: Record<string, string>, content: string) => {
-  const ce = Element.fromTag('tinymce-editor');
-  Attr.setAll(ce, attrs);
+  const ce = SugarElement.fromTag('tinymce-editor');
+  Attribute.setAll(ce, attrs);
   TextContent.set(ce, content);
-  Insert.append(Body.body(), ce);
+  Insert.append(SugarBody.body(), ce);
 };
 
 const removeTinymceElement = () => {
