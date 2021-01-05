@@ -1,3 +1,3 @@
-import Editor from "./component/Editor";
+import Editor from './component/Editor';
 
 Editor();

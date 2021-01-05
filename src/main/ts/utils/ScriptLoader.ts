@@ -15,13 +15,11 @@ export interface IStateObj {
   scriptLoaded: boolean;
 }
 
-const createState = (): IStateObj => {
-  return {
-    listeners: [],
-    scriptId: Id.generate('tiny-script'),
-    scriptLoaded: false
-  };
-};
+const createState = (): IStateObj => ({
+  listeners: [],
+  scriptId: Id.generate('tiny-script'),
+  scriptLoaded: false
+});
 
 interface ScriptLoader {
   load: (doc: Document, url: string, callback: callbackFn) => void;
