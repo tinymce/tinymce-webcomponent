@@ -1,21 +1,21 @@
 import { Pipeline, Step, Waiter, Assertions } from '@ephox/agar';
-import { Element, Attr, Body, Insert, Remove, SelectorFilter, TextContent } from '@ephox/sugar';
+import { SugarElement, Attribute, SugarBody, Insert, Remove, SelectorFilter, TextContent } from '@ephox/sugar';
 import { UnitTest } from '@ephox/bedrock-client';
-import Editor from '../../../main/ts/component/Editor'
+import Editor from '../../../main/ts/component/Editor';
 import { Arr, Global } from '@ephox/katamari';
 
 const makeTinymceElement = (attrs: Record<string, string>, content: string) => {
-  const ce = Element.fromTag('tinymce-editor');
-  Attr.setAll(ce, attrs);
+  const ce = SugarElement.fromTag('tinymce-editor');
+  Attribute.setAll(ce, attrs);
   TextContent.set(ce, content);
-  Insert.append(Body.body(), ce);
-}
+  Insert.append(SugarBody.body(), ce);
+};
 
 const removeTinymceElement = () => {
   Arr.map(SelectorFilter.all('tinymce-editor'), Remove.remove);
-}
+};
 
-UnitTest.asynctest('LoadTest', (success, failure) => { 
+UnitTest.asynctest('LoadTest', (success, failure) => {
   Editor();
   let seenSetup = false;
   let seenInit = false;
@@ -26,11 +26,11 @@ UnitTest.asynctest('LoadTest', (success, failure) => {
         seenSetup = true;
         editorInstance = editor;
       };
-      Global.customElementTinymceInit = (evt: unknown) => {
+      Global.customElementTinymceInit = (_evt: unknown) => {
         seenInit = true;
       };
     }),
-    Step.sync(() => makeTinymceElement({setup: 'customElementTinymceSetup', 'on-init': 'customElementTinymceInit'}, '<p>Hello world</p>')),
+    Step.sync(() => makeTinymceElement({ setup: 'customElementTinymceSetup', 'on-init': 'customElementTinymceInit' }, '<p>Hello world</p>')),
     Waiter.sTryUntilPredicate('Waiting for editor setup', () => seenSetup),
     Waiter.sTryUntilPredicate('Waiting for editor init', () => seenInit),
     Step.sync(() => {

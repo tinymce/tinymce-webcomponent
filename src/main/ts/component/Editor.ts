@@ -14,7 +14,7 @@ enum Status {
 const parseJsonResolveGlobals = (value: string): any => {
   try {
     return JSON.parse(value);
-  } catch(e) { /* ignore */ }
+  } catch (_e) { /* ignore */ }
   return Resolve.resolve(value);
 };
 const lookup = (values: Record<string, any>) => (key: string) => Obj.has(values, key) ? values[key] : key;
@@ -23,8 +23,7 @@ const parseGlobal = Resolve.resolve;
 const parseString = Fun.identity;
 const parseFalseOrString = lookup({ 'false': false });
 const parseBooleanOrString = lookup({ 'true': true, 'false': false });
-const parseNumberOrString = (value: string) => /^\d+$/.test(value) ? Number.parseInt(value, 10) : value
-
+const parseNumberOrString = (value: string) => /^\d+$/.test(value) ? Number.parseInt(value, 10) : value;
 
 const configAttributes: Record<string, (v: string) => unknown> = {
   setup: parseGlobal, // function
@@ -70,33 +69,33 @@ class TinyMceEditor extends HTMLElement {
   }
 
   static get observedAttributes() {
-    const nativeEvents = ['on-BeforePaste', 'on-Blur', 'on-Click', 'on-ContextMenu',
-     'on-Copy', 'on-Cut', 'on-Dblclick', 'on-Drag', 'on-DragDrop', 'on-DragEnd',
-     'on-DragGesture', 'on-DragOver', 'on-Drop', 'on-Focus', 'on-FocusIn',
-     'on-FocusOut', 'on-KeyDown', 'on-KeyPress', 'on-KeyUp', 'on-MouseDown',
-     'on-MouseEnter', 'on-MouseLeave', 'on-MouseMove', 'on-MouseOut', 'on-MouseOver',
-     'on-MouseUp', 'on-Paste', 'on-SelectionChange'];
-    const tinyEvents = ['on-Activate', 'on-AddUndo', 'on-BeforeAddUndo',
-     'on-BeforeExecCommand', 'on-BeforeGetContent', 'on-BeforeRenderUI',
-     'on-BeforeSetContent', 'on-Change', 'on-ClearUndos', 'on-Deactivate',
-     'on-Dirty', 'on-ExecCommand', 'on-GetContent', 'on-Hide', 'on-Init',
-     'on-LoadContent', 'on-NodeChange', 'on-PostProcess', 'on-PostRender',
-     'on-PreProcess', 'on-ProgressState', 'on-Redo', 'on-Remove', 'on-Reset',
-     'on-SaveContent', 'on-SetAttrib', 'on-ObjectResizeStart', 'on-ObjectResized',
-     'on-ObjectSelected', 'on-SetContent', 'on-Show', 'on-Submit', 'on-Undo',
-     'on-VisualAid'];
+    const nativeEvents = [ 'on-BeforePaste', 'on-Blur', 'on-Click', 'on-ContextMenu',
+      'on-Copy', 'on-Cut', 'on-Dblclick', 'on-Drag', 'on-DragDrop', 'on-DragEnd',
+      'on-DragGesture', 'on-DragOver', 'on-Drop', 'on-Focus', 'on-FocusIn',
+      'on-FocusOut', 'on-KeyDown', 'on-KeyPress', 'on-KeyUp', 'on-MouseDown',
+      'on-MouseEnter', 'on-MouseLeave', 'on-MouseMove', 'on-MouseOut', 'on-MouseOver',
+      'on-MouseUp', 'on-Paste', 'on-SelectionChange' ];
+    const tinyEvents = [ 'on-Activate', 'on-AddUndo', 'on-BeforeAddUndo',
+      'on-BeforeExecCommand', 'on-BeforeGetContent', 'on-BeforeRenderUI',
+      'on-BeforeSetContent', 'on-Change', 'on-ClearUndos', 'on-Deactivate',
+      'on-Dirty', 'on-ExecCommand', 'on-GetContent', 'on-Hide', 'on-Init',
+      'on-LoadContent', 'on-NodeChange', 'on-PostProcess', 'on-PostRender',
+      'on-PreProcess', 'on-ProgressState', 'on-Redo', 'on-Remove', 'on-Reset',
+      'on-SaveContent', 'on-SetAttrib', 'on-ObjectResizeStart', 'on-ObjectResized',
+      'on-ObjectSelected', 'on-SetContent', 'on-Show', 'on-Submit', 'on-Undo',
+      'on-VisualAid' ];
 
-    return ['form', 'readonly', 'autofocus', 'placeholder'].concat(nativeEvents).concat(tinyEvents);
-  };
+    return [ 'form', 'readonly', 'autofocus', 'placeholder' ].concat(nativeEvents).concat(tinyEvents);
+  }
 
   constructor() {
     super();
     this._status = Status.Raw;
-    this._shadowDom = this.attachShadow({mode:'open'});
+    this._shadowDom = this.attachShadow({ mode: 'open' });
     this._form = null;
     this._eventHandlers = {};
     this._mutationObserver = new MutationObserver(this._eventAttrHandler);
-  };
+  }
 
   private _eventAttrHandler: MutationCallback = (records) => {
     records.forEach((record) => {
@@ -104,7 +103,7 @@ class TinyMceEditor extends HTMLElement {
         this._updateEventAttr(record.attributeName, this.getAttribute(record.attributeName));
       }
     });
-  }
+  };
 
   private _formDataHandler = (evt: Event) => {
     const name = this.name;
@@ -112,9 +111,9 @@ class TinyMceEditor extends HTMLElement {
       const data = (evt as any).formData as FormData;
       data.append(name, this.value);
     }
-  }
+  };
 
-  private _updateEventAttr (attrKey: string, attrValue: string | null) {
+  private _updateEventAttr(attrKey: string, attrValue: string | null) {
     const event = attrKey.substring('on-'.length).toLowerCase();
     const handler = attrValue !== null ? Resolve.resolve(attrValue) : undefined;
     if (this._eventHandlers[event] !== handler) {
@@ -132,10 +131,10 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  private _updateForm () {
+  private _updateForm() {
     if (this.isConnected) {
       const formId = this.getAttribute('form');
-      const form = formId !== null ? this.ownerDocument.querySelector<HTMLFormElement>('form#' +formId) : this.closest('form');
+      const form = formId !== null ? this.ownerDocument.querySelector<HTMLFormElement>('form#' + formId) : this.closest('form');
       if (this._form !== form) {
         if (this._form !== null) {
           this._form.removeEventListener('formdata', this._formDataHandler);
@@ -153,9 +152,9 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  private _getTinymce () {
+  private _getTinymce() {
     return Global.tinymce;
-  };
+  }
 
   private _getConfig() {
     const config: Record<string, unknown> = parseGlobal(this.getAttribute('config') ?? '') ?? {};
@@ -176,10 +175,10 @@ class TinyMceEditor extends HTMLElement {
       config.readonly = true;
     }
     if (this.autofocus) {
-      config['auto_focus'] = true;
+      config.auto_focus = true;
     }
-    delete config['target'];
-    delete config['selector'];
+    delete config.target;
+    delete config.selector;
     return config;
   }
 
@@ -202,7 +201,7 @@ class TinyMceEditor extends HTMLElement {
     this._status = Status.Initializing;
     // load
     const target = document.createElement('textarea');
-    target.value = this.textContent ?? "";
+    target.value = this.textContent ?? '';
     if (this.placeholder !== null) {
       target.placeholder = this.placeholder;
     }
@@ -213,10 +212,10 @@ class TinyMceEditor extends HTMLElement {
       target,
       setup: (editor: any) => {
         this._editor = editor;
-        editor.on('init', (e: unknown) => {
+        editor.on('init', (_e: unknown) => {
           this._status = Status.Ready;
         });
-        editor.on('SwitchMode', (e: unknown) => {
+        editor.on('SwitchMode', (_e: unknown) => {
           // this assignment ensures the attribute is in sync with the editor
           this.readonly = this.readonly;
         });
@@ -240,7 +239,7 @@ class TinyMceEditor extends HTMLElement {
     const channel = this.getAttribute('channel') ?? '5-stable';
     const apiKey = this.hasAttribute('api-key') ? this.getAttribute('api-key') : 'no-api-key';
     return `https://cdn.tiny.cloud/1/${apiKey}/tinymce/${channel}/tinymce.min.js`;
-    
+
   }
 
   private _loadTinyDoInit() {
@@ -255,7 +254,7 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  attributeChangedCallback (attribute: string, oldValue: any, newValue: any) {
+  attributeChangedCallback(attribute: string, oldValue: any, newValue: any) {
     if (oldValue !== newValue) {
       if (attribute === 'form') {
         this._updateForm();
@@ -269,9 +268,9 @@ class TinyMceEditor extends HTMLElement {
         this._updateEventAttr(attribute, newValue);
       }
     }
-  };
+  }
 
-  connectedCallback () {
+  connectedCallback() {
     this._eventHandlers = this._getEventHandlers();
     this._mutationObserver.observe(this, { attributes: true, childList: false, subtree: false });
     this._updateForm();
@@ -280,22 +279,22 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  disconnectedCallback () {
+  disconnectedCallback() {
     this._mutationObserver.disconnect();
     this._updateForm();
   }
 
-  get value () {
+  get value() {
     return this._status === Status.Ready ? this._editor.getContent() : undefined;
-  };
+  }
 
-  set value (newValue: string) {
+  set value(newValue: string) {
     if (this._status === Status.Ready) {
       this._editor.setContent(newValue);
     }
   }
 
-  get readonly () {
+  get readonly() {
     if (this._editor) {
       return this._editor.mode.get() === 'readonly';
     } else {
@@ -303,7 +302,7 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  set readonly (value: boolean) {
+  set readonly(value: boolean) {
     if (value) {
       if (this._editor && this._editor.mode.get() !== 'readonly') {
         this._editor.mode.set('readonly');
@@ -321,11 +320,11 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  get placeholder () {
+  get placeholder() {
     return this.getAttribute('placeholder');
   }
 
-  set placeholder (value: string | null) {
+  set placeholder(value: string | null) {
     if (this._editor) {
       const target: HTMLTextAreaElement = this._editor.getElement();
       if (target !== null) {
@@ -347,11 +346,11 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  get autofocus () {
+  get autofocus() {
     return this.hasAttribute('autofocus');
   }
 
-  set autofocus (value: boolean) {
+  set autofocus(value: boolean) {
     if (value) {
       if (!this.hasAttribute('autofocus')) {
         this.setAttribute('autofocus', '');
@@ -363,12 +362,19 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  get form() { return this._form; }
-  get name() { return this.getAttribute('name'); }
-  get type() { return this.localName; }
+  get form() {
+    return this._form;
+  }
+  get name() {
+    return this.getAttribute('name');
+  }
+  get type() {
+    return this.localName;
+  }
 }
 
 // export default TinyMceEditor;
-export default function() {
-  customElements.define('tinymce-editor', TinyMceEditor);
-}
+export default () => {
+  window.customElements.define('tinymce-editor', TinyMceEditor);
+};
+

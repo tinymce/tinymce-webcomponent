@@ -19,7 +19,8 @@
     "lib": [
       "es2017",
       "dom"
-    ]
+    ],
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "src/**/*"

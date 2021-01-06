@@ -1,18 +1,17 @@
-var path = require('path');
-const express = require('express');
+import * as path from 'path';
+import express from 'express';
+
 const app = express();
 
 // Parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.urlencoded());
 
 /**
- * Encode XML entities 
+ * Encode XML entities
  * @param {string} value the value
  * @return {string} the value with the main HTML entities encoded.
  */
-const encodeHtmlEntities = (value) => {
-  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-};
+const encodeHtmlEntities = (value: string) => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 /**
  * Generate some HTML for display.
@@ -20,10 +19,9 @@ const encodeHtmlEntities = (value) => {
  * @param {string} editor2Value the value of the second editor.
  * @return {string} the page HTML.
  */
-const page = (editor1Value, editor2Value) => {
-  return  `
+const page = (editor1Value: string, editor2Value: string) => `
   <!DOCTYPE html>
-  <html>
+  <html lang="en">
     <head>
       <meta charset="utf-8"/>
       <title>TinyMCE WebComponent Form Demo Page</title>
@@ -48,23 +46,23 @@ const page = (editor1Value, editor2Value) => {
     </body>
   </html>
   `;
-};
 
 const tinyPath = path.normalize(path.join(__dirname, '..', '..', '..', 'node_modules', 'tinymce'));
-const distPath = path.normalize(path.join(__dirname, '..', '..', '..', 'dist'))
-console.log("Serving /tinymce from: " + tinyPath);
-console.log("Serving /dist from: " + distPath);
+const distPath = path.normalize(path.join(__dirname, '..', '..', '..', 'dist'));
+
+console.log('Serving /tinymce from: ' + tinyPath);
+console.log('Serving /dist from: ' + distPath);
 
 app.use('/tinymce', express.static(tinyPath));
 app.use('/dist', express.static(distPath));
 
-app.get('/', function(request, response) {
-  response.send(page("", ""));
+app.get('/', (request, response) => {
+  response.send(page('', ''));
 });
 
 // Access the parse results as request.body
-app.post('/', function(request, response) {
-  response.send(page(request.body.editor1, request.body.editor2))
+app.post('/', (request, response) => {
+  response.send(page(request.body.editor1, request.body.editor2));
 });
 
 app.listen(3000, () => console.log('http://localhost:3000/'));
