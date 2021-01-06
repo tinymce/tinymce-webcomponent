@@ -228,10 +228,10 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@tinymce/beehive-flow@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@tinymce/beehive-flow/-/beehive-flow-0.8.0.tgz#c2666881f6f1f9b5946c09217997ddfa32ce7b0d"
-  integrity sha512-agi6830XpWFq1sFdWUV4SduWf5zVeuv7F/2EFBLUQAR9r7d4zSuzAKqgEI1JHXoVF8F1Gfrte6zlXNRtCRmR/w==
+"@tinymce/beehive-flow@^0.9.0-feature.20210106005937445.50a7bd8":
+  version "0.9.0-feature.20210106005937445.50a7bd8"
+  resolved "https://registry.yarnpkg.com/@tinymce/beehive-flow/-/beehive-flow-0.9.0-feature.20210106005937445.50a7bd8.tgz#21202408db2ca79e5dc5e847be5c511f2a8013b5"
+  integrity sha512-4aj6Vqa7ExTianzmZDDhq+ELVUl3M6EC2CPvgJvPwT4ZVuWQ99hmZp0RonNT4iW+Waz6SnZeavtSBCUDV7TKuA==
   dependencies:
     cross-spawn-promise "^0.10.2"
     fp-ts "^2.9.1"
