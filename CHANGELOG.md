@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2021-01-07
+### Changed
+- Converted demo server app to TypeScript.
+- Updated dependencies.
+- Added eslint.
+- Adopted beehive-flow branching and versioning process/tooling.
+
 ## [1.0.2] - 2020-09-22
 ### Changed
 - Updated dependencies to latest available versions
