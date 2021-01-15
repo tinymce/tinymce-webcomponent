@@ -31,7 +31,6 @@ node("primary") {
     [ name: "win10Chrome", os: "windows-10", browser: "chrome" ],
     [ name: "win10FF", os: "windows-10", browser: "firefox" ]
   ]
-
   bedrockBrowsers(platforms: platforms, testDirs: [ "src/test/ts/browser" ])
 
   stage("publish") {
