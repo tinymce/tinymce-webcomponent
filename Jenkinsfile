@@ -34,8 +34,8 @@ node("primary") {
   bedrockBrowsers(platforms: platforms, testDirs: [ "src/test/ts/browser" ])
 
   stage("publish") {
-    sh "yarn beehive-flow publish"
     sshagent(credentials: ['jenkins2-github']) {
+      sh "yarn beehive-flow publish"
       sh "yarn beehive-flow advance-ci"
     }
   }
