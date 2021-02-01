@@ -12,7 +12,7 @@ node("primary") {
   }
 
   stage("dependencies") {
-    sh "yarn install"
+    sh "yarn install --frozen-lockfile"
   }
 
   stage("stamp") {
