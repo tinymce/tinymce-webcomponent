@@ -34,7 +34,7 @@ UnitTest.asynctest('LoadTest', (success, failure) => {
     Waiter.sTryUntilPredicate('Waiting for editor setup', () => seenSetup),
     Waiter.sTryUntilPredicate('Waiting for editor init', () => seenInit),
     Step.sync(() => {
-      Assertions.assertHtmlStructure('', '<p>Hello world</p>', editorInstance.getContent());
+      Assertions.assertHtmlStructure('', '<p>Hello world</p>', editorInstance.getContent() as string);
     }),
     Step.sync(() => removeTinymceElement())
   ], success, failure);

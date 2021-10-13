@@ -62,7 +62,7 @@ app.get('/', (request, response) => {
 
 // Access the parse results as request.body
 app.post('/', (request, response) => {
-  response.send(page(request.body.editor1, request.body.editor2));
+  response.send(page(request.body.editor1 as string, request.body.editor2 as string));
 });
 
 app.listen(3000, () => console.log('http://localhost:3000/'));

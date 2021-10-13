@@ -254,7 +254,7 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  attributeChangedCallback(attribute: string, oldValue: any, newValue: any) {
+  attributeChangedCallback(attribute: string, oldValue: string | null, newValue: string | null) {
     if (oldValue !== newValue) {
       if (attribute === 'form') {
         this._updateForm();
