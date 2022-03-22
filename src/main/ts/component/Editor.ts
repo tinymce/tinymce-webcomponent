@@ -1,5 +1,8 @@
 import { Resolve, Obj, Fun, Global } from '@ephox/katamari';
+import { TinyMCE, Editor } from 'tinymce';
 import { ScriptLoader } from '../utils/ScriptLoader';
+type EditorOptions = Parameters<TinyMCE['init']>[0];
+type EventHandler = Parameters<Editor['on']>[1];
 
 // the advanced config will accept any attributes that start with `config-`
 // and try to parse them as JSON or resolve them on the Global state.
@@ -11,17 +14,18 @@ enum Status {
   Ready
 }
 
-const parseJsonResolveGlobals = (value: string): any => {
+const parseJsonResolveGlobals = (value: string): unknown => {
   try {
     return JSON.parse(value);
   } catch (_e) { /* ignore */ }
   return Resolve.resolve(value);
 };
-const lookup = (values: Record<string, any>) => (key: string) => Obj.has(values, key) ? values[key] : key;
+const isLookupKey = <T extends Record<string, any>, K extends keyof T>(values: T, key: string | K): key is K => Obj.has(values, key);
+const lookup = <T extends Record<string, unknown>, K extends keyof T>(values: T) => (key: string | K) => isLookupKey(values, key) ? values[key] : key;
 
 const parseGlobal = Resolve.resolve;
 const parseString = Fun.identity;
-const parseFalseOrString = lookup({ 'false': false });
+const parseFalseOrString = lookup({ 'false': false as const });
 const parseBooleanOrString = lookup({ 'true': true, 'false': false });
 const parseNumberOrString = (value: string) => /^\d+$/.test(value) ? Number.parseInt(value, 10) : value;
 
@@ -59,9 +63,9 @@ const configRenames: Record<string, string> = {
 class TinyMceEditor extends HTMLElement {
   private _status: Status;
   private _shadowDom: ShadowRoot;
-  private _editor: any;
+  private _editor: Editor | undefined;
   private _form: HTMLFormElement | null;
-  private _eventHandlers: Record<string, any>;
+  private _eventHandlers: Record<string, EventHandler | undefined>;
   private _mutationObserver: MutationObserver;
 
   static get formAssociated() {
@@ -105,17 +109,21 @@ class TinyMceEditor extends HTMLElement {
     });
   };
 
-  private _formDataHandler = (evt: Event) => {
+  private _formDataHandler = (evt: FormDataEvent): void => {
     const name = this.name;
-    if (name !== null) {
-      const data = (evt as any).formData as FormData;
-      data.append(name, this.value);
+    if (name != null) {
+      const value = this.value;
+      if (value != null) {
+        const data = evt.formData;
+        data.append(name, value);
+      }
     }
   };
 
-  private _updateEventAttr(attrKey: string, attrValue: string | null) {
+  private _updateEventAttr(attrKey: string, attrValue: string | null): void {
     const event = attrKey.substring('on-'.length).toLowerCase();
-    const handler = attrValue !== null ? Resolve.resolve(attrValue) : undefined;
+    const resolved = attrValue !== null ? Resolve.resolve(attrValue) : undefined;
+    const handler = typeof resolved === 'function' ? resolved as EventHandler : undefined;
     if (this._eventHandlers[event] !== handler) {
       if (this._editor && this._eventHandlers[event]) {
         this._editor.off(event, this._eventHandlers[event]);
@@ -131,7 +139,7 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  private _updateForm() {
+  private _updateForm(): void {
     if (this.isConnected) {
       const formId = this.getAttribute('form');
       const form = formId !== null ? this.ownerDocument.querySelector<HTMLFormElement>('form#' + formId) : this.closest('form');
@@ -152,18 +160,18 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  private _getTinymce() {
+  private _getTinymce(): TinyMCE {
     return Global.tinymce;
   }
 
-  private _getConfig() {
-    const config: Record<string, unknown> = parseGlobal(this.getAttribute('config') ?? '') ?? {};
+  private _getConfig(): EditorOptions {
+    const config: EditorOptions = parseGlobal(this.getAttribute('config') ?? '') ?? {};
     for (let i = 0; i < this.attributes.length; i++) {
       const attr = this.attributes.item(i);
       if (attr !== null) {
         if (ADVANCED_CONFIG && attr.name.startsWith('config-')) {
           // add to config
-          const prop = attr.name.substr('config-'.length);
+          const prop = attr.name.substring('config-'.length);
           config[prop] = parseJsonResolveGlobals(attr.value);
         } else if (Obj.has(configAttributes, attr.name)) {
           const prop = Obj.has(configRenames, attr.name) ? configRenames[attr.name] : attr.name;
@@ -182,22 +190,24 @@ class TinyMceEditor extends HTMLElement {
     return config;
   }
 
-  private _getEventHandlers() {
-    const handlers: Record<string, any> = {};
+  private _getEventHandlers(): Record<string, EventHandler> {
+    const handlers: Record<string, EventHandler> = {};
     for (let i = 0; i < this.attributes.length; i++) {
       const attr = this.attributes.item(i);
       if (attr !== null) {
         if (attr.name.toLowerCase().startsWith('on-')) {
-          const event = attr.name.toLowerCase().substr('on-'.length);
+          const event = attr.name.toLowerCase().substring('on-'.length);
           const handler = Resolve.resolve(attr.value);
-          handlers[event] = handler;
+          if (typeof handler === 'function') {
+            handlers[event] = handler as EventHandler;
+          }
         }
       }
     }
     return handlers;
   }
 
-  private _doInit() {
+  private _doInit(): void {
     this._status = Status.Initializing;
     // load
     const target = document.createElement('textarea');
@@ -207,10 +217,10 @@ class TinyMceEditor extends HTMLElement {
     }
     this._shadowDom.appendChild(target);
     const baseConfig = this._getConfig();
-    const conf = {
+    const conf: EditorOptions = {
       ...baseConfig,
       target,
-      setup: (editor: any) => {
+      setup: (editor: Editor) => {
         this._editor = editor;
         editor.on('init', (_e: unknown) => {
           this._status = Status.Ready;
@@ -219,8 +229,10 @@ class TinyMceEditor extends HTMLElement {
           // this assignment ensures the attribute is in sync with the editor
           this.readonly = this.readonly;
         });
-        Object.keys(this._eventHandlers).forEach((event) => {
-          editor.on(event, this._eventHandlers[event]);
+        Obj.each(this._eventHandlers, (handler, event) => {
+          if (handler !== undefined) {
+            editor.on(event, handler);
+          }
         });
         if (typeof baseConfig.setup === 'function') {
           baseConfig.setup(editor);
@@ -231,18 +243,18 @@ class TinyMceEditor extends HTMLElement {
     this._getTinymce().init(conf);
   }
 
-  private _getTinymceSrc() {
+  private _getTinymceSrc(): string {
     const src = this.getAttribute('src');
     if (src) {
       return src;
     }
-    const channel = this.getAttribute('channel') ?? '5-stable';
+    const channel = this.getAttribute('channel') ?? '6';
     const apiKey = this.hasAttribute('api-key') ? this.getAttribute('api-key') : 'no-api-key';
     return `https://cdn.tiny.cloud/1/${apiKey}/tinymce/${channel}/tinymce.min.js`;
 
   }
 
-  private _loadTinyDoInit() {
+  private _loadTinyDoInit(): void {
     if (this._getTinymce()) {
       this._doInit();
     } else {
@@ -254,7 +266,7 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  attributeChangedCallback(attribute: string, oldValue: string | null, newValue: string | null) {
+  attributeChangedCallback(attribute: string, oldValue: string | null, newValue: string | null): void {
     if (oldValue !== newValue) {
       if (attribute === 'form') {
         this._updateForm();
@@ -264,13 +276,13 @@ class TinyMceEditor extends HTMLElement {
         this.autofocus = newValue !== null;
       } else if (attribute === 'placeholder') {
         this.placeholder = newValue;
-      } else if (attribute.toLowerCase().startsWith('on')) {
+      } else if (attribute.toLowerCase().startsWith('on-')) {
         this._updateEventAttr(attribute, newValue);
       }
     }
   }
 
-  connectedCallback() {
+  connectedCallback(): void {
     this._eventHandlers = this._getEventHandlers();
     this._mutationObserver.observe(this, { attributes: true, childList: false, subtree: false });
     this._updateForm();
@@ -279,22 +291,22 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  disconnectedCallback() {
+  disconnectedCallback(): void {
     this._mutationObserver.disconnect();
     this._updateForm();
   }
 
-  get value() {
-    return this._status === Status.Ready ? this._editor.getContent() : undefined;
+  get value(): string | null {
+    return (this._status === Status.Ready ? this._editor?.getContent() : undefined) ?? null;
   }
 
-  set value(newValue: string) {
-    if (this._status === Status.Ready) {
-      this._editor.setContent(newValue);
+  set value(newValue: string | null) {
+    if (this._status === Status.Ready && newValue != null) {
+      this._editor?.setContent(newValue);
     }
   }
 
-  get readonly() {
+  get readonly(): boolean {
     if (this._editor) {
       return this._editor.mode.get() === 'readonly';
     } else {
@@ -320,13 +332,13 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  get placeholder() {
+  get placeholder(): string | null {
     return this.getAttribute('placeholder');
   }
 
   set placeholder(value: string | null) {
     if (this._editor) {
-      const target: HTMLTextAreaElement = this._editor.getElement();
+      const target = this._editor.getElement();
       if (target !== null) {
         if (value !== null) {
           target.setAttribute('placeholder', value);
@@ -346,7 +358,7 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  get autofocus() {
+  get autofocus(): boolean {
     return this.hasAttribute('autofocus');
   }
 
@@ -362,13 +374,13 @@ class TinyMceEditor extends HTMLElement {
     }
   }
 
-  get form() {
+  get form(): HTMLFormElement | null {
     return this._form;
   }
-  get name() {
+  get name(): string | null {
     return this.getAttribute('name');
   }
-  get type() {
+  get type(): string {
     return this.localName;
   }
 }

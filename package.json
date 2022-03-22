@@ -21,7 +21,7 @@
     "webcomponent"
   ],
   "author": "Tiny Technologies",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "devDependencies": {
     "@ephox/agar": "^7.0.1",
     "@ephox/bedrock-client": "^13.0.0",
@@ -42,13 +42,13 @@
     "esm": "^3.2.25",
     "express": "^4.17.3",
     "rollup": "^2.70.1",
-    "tinymce": "^5.10.0",
+    "tinymce": "^6.0.0",
     "ts-loader": "^9.2.8",
     "ts-node": "^10.7.0",
     "typescript": "~4.6.2",
     "webpack": "^5.70.0"
   },
   "dependencies": {},
-  "version": "1.2.1-rc",
+  "version": "2.0.0-rc",
   "name": "@tinymce/tinymce-webcomponent"
 }

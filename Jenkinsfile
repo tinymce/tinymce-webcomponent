@@ -1,5 +1,5 @@
 #!groovy
-@Library('waluigi@v4.0.0') _
+@Library('waluigi@v5.0.0') _
 
 standardProperties()
 
@@ -12,7 +12,7 @@ node("primary") {
   }
 
   stage("dependencies") {
-    sh "yarn install --frozen-lockfile"
+    yarnInstall()
   }
 
   stage("stamp") {
