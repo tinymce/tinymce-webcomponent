@@ -6,6 +6,7 @@ import { Arr, Global } from '@ephox/katamari';
 
 const makeTinymceElement = (attrs: Record<string, string>, content: string) => {
   const ce = SugarElement.fromTag('tinymce-editor');
+  Attribute.set(ce, 'channel', '6-testing');
   Attribute.setAll(ce, attrs);
   TextContent.set(ce, content);
   Insert.append(SugarBody.body(), ce);
