@@ -14,6 +14,23 @@ enum Status {
   Ready
 }
 
+// handle traversing all shadow roots
+const closestRecursive: {
+  <K extends keyof HTMLElementTagNameMap>(selector: K, element: Element): HTMLElementTagNameMap[K] | null;
+  <K extends keyof SVGElementTagNameMap>(selector: K, element: Element): SVGElementTagNameMap[K] | null;
+  <E extends Element = Element>(selectors: string, element: Element): E | null;
+} = (selector: string, element: Element): Element | null => {
+  const found = element.closest(selector);
+  if (found !== null) {
+    return found;
+  }
+  const next = (element.getRootNode() as ShadowRoot).host;
+  if (next !== null) {
+    return closestRecursive(selector, next);
+  }
+  return null;
+};
+
 const parseJsonResolveGlobals = (value: string): unknown => {
   try {
     return JSON.parse(value);
@@ -142,7 +159,7 @@ class TinyMceEditor extends HTMLElement {
   private _updateForm(): void {
     if (this.isConnected) {
       const formId = this.getAttribute('form');
-      const form = formId !== null ? this.ownerDocument.querySelector<HTMLFormElement>('form#' + formId) : this.closest('form');
+      const form = formId !== null ? this.ownerDocument.querySelector<HTMLFormElement>('form#' + formId) : closestRecursive('form', this);
       if (this._form !== form) {
         if (this._form !== null) {
           this._form.removeEventListener('formdata', this._formDataHandler);
