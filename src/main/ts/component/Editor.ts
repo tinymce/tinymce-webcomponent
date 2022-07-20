@@ -25,7 +25,7 @@ const closestRecursive: {
     return found;
   }
   const next = (element.getRootNode() as ShadowRoot).host;
-  if (next !== null) {
+  if (next !== null && next !== undefined) {
     return closestRecursive(selector, next);
   }
   return null;
