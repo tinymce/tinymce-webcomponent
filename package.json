@@ -49,6 +49,6 @@
     "webpack": "^5.73.0"
   },
   "dependencies": {},
-  "version": "2.0.1-rc",
+  "version": "2.0.1",
   "name": "@tinymce/tinymce-webcomponent"
 }
