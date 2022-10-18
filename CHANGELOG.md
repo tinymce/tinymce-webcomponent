@@ -8,12 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Updated CI library to latest
 
-## 2.0.1
+## 2.0.1 - 2022-07-27
 ### Fixed
 - Find an associated form even when in a nested shadow DOM.
 - Updated dependencies to latest version
 
-## 2.0.0
+## 2.0.0 - 2022-04-08
 ### Changed
 - License changed to MIT (from Apache 2) this matches TinyMCE 6 license
 - Changed default cloudChannel to `'6'`.
