@@ -1,11 +1,11 @@
 #!groovy
-@Library('waluigi@v6.0.1') _
+@Library('waluigi@release/7') _
 
 beehiveFlowBuild(
   test: {
     def platforms = [
-      [ os: "windows-10", browser: "chrome" ],
-      [ os: "windows-10", browser: "firefox" ]
+      [ os: "windows", browser: "chrome" ],
+      [ os: "windows", browser: "firefox" ]
     ]
     bedrockBrowsers(platforms: platforms, testDirs: ["src/test/ts/browser"])
   }
