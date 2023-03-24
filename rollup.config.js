@@ -1,6 +1,6 @@
 const swag = require('@ephox/swag');
 
-export default {
+module.exports = {
   input: 'lib/main/ts/Main.js',
   output: {
     file: 'dist/tinymce-webcomponent.js',
