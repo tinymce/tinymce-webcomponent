@@ -17,9 +17,10 @@
         setup="editors.setupFn"
         on-change="editors.changeFn"
         on-init="editors.initFn"
+        promotion="false"
       ></tinymce-editor>
       <h3>Default with readonly</h3>
-      <tinymce-editor readonly>
+      <tinymce-editor promotion="false" readonly>
         &lt;p&gt;The quick &lt;b&gt;brown&lt;/b&gt; fox.&lt;/p&gt;
         &lt;p&gt;Jumps over the &lt;i&gt;lazy&lt;/i&gt; dog.&lt;/p&gt;
         &lt;p&gt;&lt;img src=&quot;http://www.google.com/google.jpg&quot; onload=&quot;javascript: alert('hello');&quot;/&gt;&lt;/p&gt;
