@@ -71,7 +71,8 @@ const configAttributes: Record<string, (v: string) => unknown> = {
   images_upload_credentials: parseBooleanOrString, // boolean
   images_reuse_filename: parseBooleanOrString, // boolean
   icons: parseString, // name of icon pack eg. 'material'
-  icons_url: parseString // url to icon pack js
+  icons_url: parseString, // url to icon pack js
+  promotion: parseBooleanOrString, // boolean
 };
 
 const configRenames: Record<string, string> = {
