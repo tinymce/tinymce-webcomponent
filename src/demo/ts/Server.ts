@@ -55,6 +55,12 @@ const page = (editor1Value: string, editor2Value: string, editor3Value: string, 
         <tinymce-editor-nested nested="2" name="editor4" value="${encodeHtmlEntities(editor4Value)}"></tinymce-editor-nested>
         <input type="submit" value="Submit">
       </form>
+      <h2>Editor 5 (in scrollable container)</h2>
+      <div style="border: 1px solid black; height: 500px; width: 300px; overflow: scroll;">
+        <tinymce-editor height="1000" name="editor5" form="myform" contextmenu="link" plugins="link" ui_mode="split">
+          ${encodeHtmlEntities(editor1Value)}
+        </tinymce-editor>
+      </div>
 
       <h2>Posted Content</h2>
       <h3>Editor 1 value</h3>

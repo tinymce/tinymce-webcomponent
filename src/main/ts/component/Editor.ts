@@ -73,6 +73,7 @@ const configAttributes: Record<string, (v: string) => unknown> = {
   icons: parseString, // name of icon pack eg. 'material'
   icons_url: parseString, // url to icon pack js
   promotion: parseBooleanOrString, // boolean
+  ui_mode: parseString, // 'combined', 'split
 };
 
 const configRenames: Record<string, string> = {
