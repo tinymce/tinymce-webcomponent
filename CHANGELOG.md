@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Set default value of `ui_mode` option to `split`.
+
+### Fixed
+-  Updated TinyMCE dependencies.
+
 ## 2.0.2 - 2023-03-27
 
 ### Fixed
