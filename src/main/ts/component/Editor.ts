@@ -204,6 +204,11 @@ class TinyMceEditor extends HTMLElement {
     if (this.autofocus) {
       config.auto_focus = true;
     }
+
+    if (!this.hasAttribute('ui_mode')) {
+      config.ui_mode = 'split';
+    }
+
     delete config.target;
     delete config.selector;
     return config;
