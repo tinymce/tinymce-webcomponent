@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - The `id` attribute was not being used as the id for the editor.
 
-### Improvment
+### Improved
 - Now `statusbar` can be passed direclty as attribute
 
 ## 2.0.2 - 2023-03-27
