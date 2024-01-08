@@ -230,6 +230,10 @@ class TinyMceEditor extends HTMLElement {
     // load
     const target = document.createElement('textarea');
     target.value = this.textContent ?? '';
+    const attrId = this.attributes.getNamedItem('id')?.value;
+    if (attrId) {
+      target.id = attrId;
+    }
     if (this.placeholder !== null) {
       target.placeholder = this.placeholder;
     }
