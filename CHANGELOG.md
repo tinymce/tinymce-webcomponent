@@ -6,11 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### Fixed
-- The `id` attribute was not being used as the id for the editor.
+## 2.1.0 - 2024-01-08
 
 ### Added
 - Added new `statusbar` attribute that sets the editors `statusbar` config option.
+
+### Fixed
+- The `id` attribute was not being used as the id for the editor.
 
 ## 2.0.2 - 2023-03-27
 
