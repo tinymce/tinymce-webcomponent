@@ -48,6 +48,7 @@ const parseNumberOrString = (value: string) => /^\d+$/.test(value) ? Number.pars
 
 const configAttributes: Record<string, (v: string) => unknown> = {
   setup: parseGlobal, // function
+  statusbar: parseBooleanOrString, // boolean
   toolbar: parseFalseOrString, // string or false
   menubar: parseFalseOrString, // string or false
   plugins: parseString, // string
