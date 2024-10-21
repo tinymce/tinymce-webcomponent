@@ -25,7 +25,7 @@
   "devDependencies": {
     "@ephox/agar": "^8.0.1",
     "@ephox/bedrock-client": "^14.1.1",
-    "@ephox/bedrock-server": "^15.0.0-alpha.4",
+    "@ephox/bedrock-server": "^14.1.4",
     "@ephox/katamari": "^9.1.5",
     "@ephox/sugar": "^9.2.1",
     "@ephox/swag": "^4.6.0",
