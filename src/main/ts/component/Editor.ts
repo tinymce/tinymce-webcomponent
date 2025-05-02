@@ -74,6 +74,7 @@ const configAttributes: Record<string, (v: string) => unknown> = {
   icons: parseString, // name of icon pack eg. 'material'
   icons_url: parseString, // url to icon pack js
   promotion: parseBooleanOrString, // boolean
+  disabled: parseBooleanOrString, // boolean
 };
 
 const configRenames: Record<string, string> = {
@@ -108,7 +109,7 @@ class TinyMceEditor extends HTMLElement {
       'on-ObjectSelected', 'on-SetContent', 'on-Show', 'on-Submit', 'on-Undo',
       'on-VisualAid' ];
 
-    return [ 'form', 'readonly', 'autofocus', 'placeholder' ].concat(nativeEvents).concat(tinyEvents);
+    return [ 'form', 'readonly', 'autofocus', 'placeholder', 'disabled' ].concat(nativeEvents).concat(tinyEvents);
   }
 
   constructor() {
@@ -351,6 +352,32 @@ class TinyMceEditor extends HTMLElement {
       }
       if (this.hasAttribute('readonly')) {
         this.removeAttribute('readonly');
+      }
+    }
+  }
+
+  get disabled(): boolean {
+    if (this._editor) {
+      return this._editor.mode.get() === 'disabled';
+    } else {
+      return this.hasAttribute('disabled');
+    }
+  }
+
+  set disabled(value: boolean) {
+    if (value) {
+      if (this._editor && this._editor.mode.get() !== 'disabled') {
+        this._editor.mode.set('disabled');
+      }
+      if (!this.hasAttribute('disabled')) {
+        this.setAttribute('disabled', '');
+      }
+    } else {
+      if (this._editor && this._editor.mode.get() === 'disabled') {
+        this._editor.mode.set('design');
+      }
+      if (this.hasAttribute('disabled')) {
+        this.removeAttribute('disabled');
       }
     }
   }
