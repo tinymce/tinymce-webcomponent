@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>TinyMCE WebComponent Demo: Disabled and Readonly </title>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  </head>
+
+  <body>
+    <script>
+      function toggleDisabled() {
+        var editor = document.getElementById('mody');
+
+        if (!editor.hasAttribute('disabled')) {
+          editor.setAttribute('disabled', '');
+        } else {
+          editor.removeAttribute('disabled');
+        }
+      }
+
+      function toggleReadonly() {
+        var editor = document.getElementById('mody');
+
+        editor.removeAttribute('disabled');
+        if (!editor.hasAttribute('readonly')) {
+          editor.setAttribute('readonly', '');
+        } else {
+          editor.removeAttribute('readonly');
+        }
+      }
+    </script>
+	  <h2>TinyMCE WebComponent Demo: Disabled and Readonly</h2>
+    <div id="ephox-ui">
+      <button onclick="toggleDisabled()">Toggle disabled</button>
+      <button onclick="toggleReadonly()">Toggle readonly</button>
+      <tinymce-editor id="mody"></tinymce-editor>
+    </div>
+  <script src="../../../node_modules/tinymce/tinymce.js"></script>
+  <script src="../../../dist/tinymce-webcomponent.js"></script>
+  </body>
+</html>

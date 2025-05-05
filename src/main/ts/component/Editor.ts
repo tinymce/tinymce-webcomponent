@@ -74,7 +74,6 @@ const configAttributes: Record<string, (v: string) => unknown> = {
   icons: parseString, // name of icon pack eg. 'material'
   icons_url: parseString, // url to icon pack js
   promotion: parseBooleanOrString, // boolean
-  disabled: parseBooleanOrString, // boolean
 };
 
 const configRenames: Record<string, string> = {
@@ -202,6 +201,9 @@ class TinyMceEditor extends HTMLElement {
     if (this.readonly) {
       config.readonly = true;
     }
+    if (this.disabled) {
+      config.disabled = true;
+    }
     if (this.autofocus) {
       config.auto_focus = true;
     }
@@ -294,6 +296,8 @@ class TinyMceEditor extends HTMLElement {
     if (oldValue !== newValue) {
       if (attribute === 'form') {
         this._updateForm();
+      } else if (attribute === 'disabled') {
+        this.disabled = newValue !== null;
       } else if (attribute === 'readonly') {
         this.readonly = newValue !== null;
       } else if (attribute === 'autofocus') {
@@ -357,25 +361,23 @@ class TinyMceEditor extends HTMLElement {
   }
 
   get disabled(): boolean {
-    if (this._editor) {
-      return this._editor.mode.get() === 'disabled';
-    } else {
-      return this.hasAttribute('disabled');
-    }
+    return this._editor ? this._editor.options.get('disabled') : this.hasAttribute('disabled');
   }
 
   set disabled(value: boolean) {
     if (value) {
-      if (this._editor && this._editor.mode.get() !== 'disabled') {
-        this._editor.mode.set('disabled');
+      if (this._editor && this._editor.options.get('disabled') === false) {
+        this._editor.options.set('disabled', value);
       }
+
       if (!this.hasAttribute('disabled')) {
         this.setAttribute('disabled', '');
       }
     } else {
-      if (this._editor && this._editor.mode.get() === 'disabled') {
-        this._editor.mode.set('design');
+      if (this._editor && this._editor.options.get('disabled') === true) {
+        this._editor.options.set('disabled', false);
       }
+
       if (this.hasAttribute('disabled')) {
         this.removeAttribute('disabled');
       }
