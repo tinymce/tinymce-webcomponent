@@ -76,7 +76,14 @@ const configAttributes: Record<string, (v: string) => unknown> = {
   promotion: parseBooleanOrString, // boolean
 };
 
-const configRenames: Record<string, string> = {
+const configRenames: Record<string, string> = {};
+
+// Function that checks if the disabled option is supported with the version used
+const isDisabledOptionSupported = (tinymce: TinyMCE): boolean => {
+  const major = parseFloat(tinymce.majorVersion);
+  const minor = parseFloat(tinymce.minorVersion);
+  const version = major + minor / 10;
+  return version >= 7.6;
 };
 
 class TinyMceEditor extends HTMLElement {
@@ -248,7 +255,22 @@ class TinyMceEditor extends HTMLElement {
       target,
       setup: (editor: Editor) => {
         this._editor = editor;
-        editor.on('init', (_e: unknown) => {
+        editor.on("init", (_e: unknown) => {
+          const tinymce = this._getTinymce();
+          const isDisableSupported = isDisabledOptionSupported(tinymce);
+          if (isDisableSupported) {
+            if (this.hasAttribute('readonly')) {
+              this.setAttribute('readonly', '');
+            } else {
+              this.removeAttribute('readonly');
+            }
+          } else {
+            if (!this.hasAttribute('disabled')) {
+              this.setAttribute('disabled', '');
+            } else {
+              this.removeAttribute('disabled');
+            }
+          }
           this._status = Status.Ready;
         });
         editor.on('SwitchMode', (_e: unknown) => {
@@ -336,51 +358,52 @@ class TinyMceEditor extends HTMLElement {
 
   get readonly(): boolean {
     if (this._editor) {
-      return this._editor.mode.get() === 'readonly';
+      return this._editor.mode.get() === "readonly";
     } else {
-      return this.hasAttribute('readonly');
+      return this.hasAttribute("readonly");
     }
   }
 
   set readonly(value: boolean) {
     if (value) {
-      if (this._editor && this._editor.mode.get() !== 'readonly') {
-        this._editor.mode.set('readonly');
+      if (this._editor && this._editor.mode.get() !== "readonly") {
+        this._editor.mode.set("readonly");
       }
-      if (!this.hasAttribute('readonly')) {
-        this.setAttribute('readonly', '');
+      if (!this.hasAttribute("readonly")) {
+        this.setAttribute("readonly", "");
       }
     } else {
-      if (this._editor && this._editor.mode.get() === 'readonly') {
-        this._editor.mode.set('design');
+      if (this._editor && this._editor.mode.get() === "readonly") {
+        this._editor.mode.set("design");
       }
-      if (this.hasAttribute('readonly')) {
-        this.removeAttribute('readonly');
+      if (this.hasAttribute("readonly")) {
+        this.removeAttribute("readonly");
       }
     }
   }
 
   get disabled(): boolean {
-    return this._editor ? this._editor.options.get('disabled') : this.hasAttribute('disabled');
+    return this._editor
+      ? this._editor.options.get("disabled")
+      : this.hasAttribute("disabled");
   }
 
   set disabled(value: boolean) {
-    if (value) {
-      if (this._editor && this._editor.options.get('disabled') === false) {
-        this._editor.options.set('disabled', value);
+    const tinymce = this._getTinymce?.();
+    const isNew = tinymce ? isDisabledOptionSupported(tinymce) : true;
+  
+    if (this._editor && this._status === Status.Ready) {
+      if (isNew) {
+        this._editor.options.set('disabled', value); 
+      } else {
+        this._editor.mode.set(value ? 'readonly' : 'design');
       }
-
-      if (!this.hasAttribute('disabled')) {
-        this.setAttribute('disabled', '');
-      }
-    } else {
-      if (this._editor && this._editor.options.get('disabled') === true) {
-        this._editor.options.set('disabled', false);
-      }
-
-      if (this.hasAttribute('disabled')) {
-        this.removeAttribute('disabled');
-      }
+    }
+  
+    if (value && !this.hasAttribute('disabled')) {
+      this.setAttribute('disabled', '');
+    } else if (!value && this.hasAttribute('disabled')) {
+      this.removeAttribute('disabled');
     }
   }
 

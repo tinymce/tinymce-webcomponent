@@ -9,28 +9,15 @@
 
 <body>
   <script>
-
-
     function toggleDisabled() {
       var editor = document.getElementById('mody');
-      const editorInstance = editor.get
-        var version = tinymce.majorVersion + '.' + tinymce.minorVersion
-        var isoldVersion = parseFloat(version) < 7.6
-        if (isoldVersion) {
-          if (!editor.hasAttribute('readonly')) {
-            editor.setAttribute('readonly', '');
-          } else {
-            editor.removeAttribute('readonly');
-          }
-        } else {
-          if (!editor.hasAttribute('disabled')) {
-            editor.setAttribute('disabled', '')
-          }
-          else {
-            editor.removeAttribute('disabled');
-          }
-        }
+
+      if (!editor.hasAttribute('disabled')) {
+        editor.setAttribute('disabled', '');
+      } else {
+        editor.removeAttribute('disabled');
       }
+    }
 
     function toggleReadonly() {
       var editor = document.getElementById('mody');
