@@ -1,6 +1,7 @@
 import { Resolve, Obj, Fun, Global } from '@ephox/katamari';
 import { TinyMCE, Editor } from 'tinymce';
 import { ScriptLoader } from '../utils/ScriptLoader';
+import { TinyVer } from '@tinymce/miniature';
 type EditorOptions = Parameters<TinyMCE['init']>[0];
 type EventHandler = Parameters<Editor['on']>[1];
 
@@ -80,10 +81,7 @@ const configRenames: Record<string, string> = {};
 
 // Function that checks if the disabled option is supported with the version used
 const isDisabledOptionSupported = (tinymce: TinyMCE): boolean => {
-  const major = parseFloat(tinymce.majorVersion);
-  const minor = parseFloat(tinymce.minorVersion);
-  const version = major + minor / 10;
-  return version >= 7.6;
+  return (!TinyVer.isLessThan(tinymce, '7.6.0'))
 };
 
 class TinyMceEditor extends HTMLElement {
@@ -258,18 +256,11 @@ class TinyMceEditor extends HTMLElement {
         editor.on("init", (_e: unknown) => {
           const tinymce = this._getTinymce();
           const isDisableSupported = isDisabledOptionSupported(tinymce);
-          if (isDisableSupported) {
-            if (this.hasAttribute('readonly')) {
-              this.setAttribute('readonly', '');
-            } else {
-              this.removeAttribute('readonly');
-            }
-          } else {
-            if (!this.hasAttribute('disabled')) {
-              this.setAttribute('disabled', '');
-            } else {
-              this.removeAttribute('disabled');
-            }
+          if (isDisableSupported && this.hasAttribute('disabled')) {
+            editor.options.set('disabled', true);
+          }
+          if (this.hasAttribute('readonly')) {
+            editor.options.set('readonly', true);
           }
           this._status = Status.Ready;
         });
@@ -358,46 +349,42 @@ class TinyMceEditor extends HTMLElement {
 
   get readonly(): boolean {
     if (this._editor) {
-      return this._editor.mode.get() === "readonly";
+      return this._editor.mode.get() === 'readonly';
     } else {
-      return this.hasAttribute("readonly");
+      return this.hasAttribute('readonly');
     }
   }
 
   set readonly(value: boolean) {
     if (value) {
-      if (this._editor && this._editor.mode.get() !== "readonly") {
-        this._editor.mode.set("readonly");
+      if (this._editor && this._editor.mode.get() !== 'readonly') {
+        this._editor.mode.set('readonly');
       }
-      if (!this.hasAttribute("readonly")) {
-        this.setAttribute("readonly", "");
+      if (!this.hasAttribute('readonly')) {
+        this.setAttribute('readonly', '');
       }
     } else {
-      if (this._editor && this._editor.mode.get() === "readonly") {
-        this._editor.mode.set("design");
+      if (this._editor && this._editor.mode.get() === 'readonly') {
+        this._editor.mode.set('design');
       }
-      if (this.hasAttribute("readonly")) {
-        this.removeAttribute("readonly");
+      if (this.hasAttribute('readonly')) {
+        this.removeAttribute('readonly');
       }
     }
   }
 
   get disabled(): boolean {
     return this._editor
-      ? this._editor.options.get("disabled")
-      : this.hasAttribute("disabled");
+      ? this._editor.options.get('disabled')
+      : this.hasAttribute('disabled');
   }
 
   set disabled(value: boolean) {
     const tinymce = this._getTinymce?.();
-    const isNew = tinymce ? isDisabledOptionSupported(tinymce) : true;
+    const isVersionNewer = tinymce ? isDisabledOptionSupported(tinymce) : true;
   
-    if (this._editor && this._status === Status.Ready) {
-      if (isNew) {
-        this._editor.options.set('disabled', value); 
-      } else {
-        this._editor.mode.set(value ? 'readonly' : 'design');
-      }
+    if (this._editor && this._status === Status.Ready && isVersionNewer) {
+     this._editor.options.set('disabled', value);
     }
   
     if (value && !this.hasAttribute('disabled')) {
