@@ -638,7 +638,7 @@
     "@deno/shim-deno-test" "^0.4.0"
     which "^2.0.2"
 
-"@ephox/agar@^8.0.1":
+"@ephox/agar@^8.0.0", "@ephox/agar@^8.0.1":
   version "8.0.1"
   resolved "https://registry.yarnpkg.com/@ephox/agar/-/agar-8.0.1.tgz#6772ed7abd90adee5b08bc6f8baf0cb4f22b8d1c"
   integrity sha512-2LR/u0oos9GadRoLFDVE6NRDV8Tl9+DYQyouVYn0+7afAYdouyw+nXaoTVG5nnvMG+ofsmldKOC82nJWu0a4kQ==
@@ -758,6 +758,17 @@
   dependencies:
     "@ephox/dispute" "^1.0.3"
 
+"@ephox/mcagar@^9.0.0":
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/@ephox/mcagar/-/mcagar-9.0.1.tgz#d740d02628063e8df86ca8cdd8aa307654b1c69b"
+  integrity sha512-iNMP8mkz8AtgiRceU4TAnstQje3RG8yxM/QoWKkriCeh6n5fe1sSfexFRVW3fwZ0bUrjTlyawSqoH0yhESqJjQ==
+  dependencies:
+    "@ephox/agar" "^8.0.1"
+    "@ephox/katamari" "^9.1.6"
+    "@ephox/sand" "^6.0.10"
+    "@ephox/sugar" "^9.3.1"
+    fast-check "^2.0.0"
+
 "@ephox/sand@^6.0.10":
   version "6.0.10"
   resolved "https://registry.yarnpkg.com/@ephox/sand/-/sand-6.0.10.tgz#1bd3e03ce339ab282fa3ac03591badc13f7d69b1"
@@ -765,7 +776,7 @@
   dependencies:
     "@ephox/katamari" "^9.1.6"
 
-"@ephox/sugar@^9.2.1", "@ephox/sugar@^9.3.1":
+"@ephox/sugar@^9.2.1", "@ephox/sugar@^9.3.0", "@ephox/sugar@^9.3.1":
   version "9.3.1"
   resolved "https://registry.yarnpkg.com/@ephox/sugar/-/sugar-9.3.1.tgz#082dbe885d41e657eff7ef6275d648f3dff88334"
   integrity sha512-NQMqDN0zC+IZGuhBuz/7RxncfJsmTBhCHgaqkHOJ5d1E0CIL9afIizBYQ0JSHS3osAb9woGGtwPobjCx3/Srpw==
@@ -1543,6 +1554,16 @@
     eslint-plugin-prefer-arrow "^1.2.3"
     resolve "^1.17.0"
     typescript "^4.9.5"
+
+"@tinymce/miniature@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@tinymce/miniature/-/miniature-6.0.0.tgz#d11ca91292fa614926faf399166898874baedd92"
+  integrity sha512-bLpaTTgbyMHP3V8bucSxvCTVTUjRRk05zDgnlD5Hj2eo6hEyHT1FCqpuhdVLHx9mbCydrlAIhhsY8Ex6Hp8Qqg==
+  dependencies:
+    "@ephox/agar" "^8.0.0"
+    "@ephox/katamari" "^9.1.5"
+    "@ephox/mcagar" "^9.0.0"
+    "@ephox/sugar" "^9.3.0"
 
 "@tootallnate/quickjs-emscripten@^0.23.0":
   version "0.23.0"
