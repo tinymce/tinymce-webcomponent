@@ -80,9 +80,7 @@ const configAttributes: Record<string, (v: string) => unknown> = {
 const configRenames: Record<string, string> = {};
 
 // Function that checks if the disabled option is supported with the version used
-const isDisabledOptionSupported = (tinymce: TinyMCE): boolean => {
-  return (!TinyVer.isLessThan(tinymce, '7.6.0'))
-};
+const isDisabledOptionSupported = (tinymce: TinyMCE): boolean => !TinyVer.isLessThan(tinymce, '7.6.0');
 
 class TinyMceEditor extends HTMLElement {
   private _status: Status;
@@ -250,24 +248,26 @@ class TinyMceEditor extends HTMLElement {
     const baseConfig = this._getConfig();
     const conf: EditorOptions = {
       ...baseConfig,
+      ...{
+        disabled: this.hasAttribute('disabled'),
+        readonly: this.hasAttribute('readonly')
+      },
       target,
       setup: (editor: Editor) => {
         this._editor = editor;
-        editor.on("init", (_e: unknown) => {
-          const tinymce = this._getTinymce();
-          const isDisableSupported = isDisabledOptionSupported(tinymce);
-          if (isDisableSupported && this.hasAttribute('disabled')) {
-            editor.options.set('disabled', true);
-          }
-          if (this.hasAttribute('readonly')) {
-            editor.options.set('readonly', true);
-          }
+        editor.on('init', (_e: unknown) => {
           this._status = Status.Ready;
         });
         editor.on('SwitchMode', (_e: unknown) => {
           // this assignment ensures the attribute is in sync with the editor
           this.readonly = this.readonly;
         });
+
+        editor.on('DisabledStateChange', (_e: unknown) => {
+          // this assignment ensures the attribute is in sync with the editor
+          this.disabled = this.disabled;
+        });
+
         Obj.each(this._eventHandlers, (handler, event) => {
           if (handler !== undefined) {
             editor.on(event, handler);
@@ -382,11 +382,11 @@ class TinyMceEditor extends HTMLElement {
   set disabled(value: boolean) {
     const tinymce = this._getTinymce?.();
     const isVersionNewer = tinymce ? isDisabledOptionSupported(tinymce) : true;
-  
+
     if (this._editor && this._status === Status.Ready && isVersionNewer) {
-     this._editor.options.set('disabled', value);
+      this._editor.options.set('disabled', value);
     }
-  
+
     if (value && !this.hasAttribute('disabled')) {
       this.setAttribute('disabled', '');
     } else if (!value && this.hasAttribute('disabled')) {

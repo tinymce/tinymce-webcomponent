@@ -10,8 +10,7 @@
 <body>
   <script>
     function toggleDisabled() {
-      var editor = document.getElementById('mody');
-
+      var editor = document.getElementById('disabled_state');
       if (!editor.hasAttribute('disabled')) {
         editor.setAttribute('disabled', '');
       } else {
@@ -20,9 +19,7 @@
     }
 
     function toggleReadonly() {
-      var editor = document.getElementById('mody');
-
-      editor.removeAttribute('disabled');
+      var editor = document.getElementById('readonly_mode');
       if (!editor.hasAttribute('readonly')) {
         editor.setAttribute('readonly', '');
       } else {
@@ -32,9 +29,12 @@
   </script>
   <h2>TinyMCE WebComponent Demo: Disabled and Readonly</h2>
   <div id="ephox-ui">
-    <button onclick="toggleDisabled()">Toggle disabled</button>
+    <h2>Readonly mode</h2>
     <button onclick="toggleReadonly()">Toggle readonly</button>
-    <tinymce-editor id="mody"></tinymce-editor>
+    <tinymce-editor id="readonly_mode" readonly></tinymce-editor>
+    <h2>Disabled state</h2>
+    <button onclick="toggleDisabled()" plugins="help">Toggle disabled</button>
+    <tinymce-editor id="disabled_state" disabled></tinymce-editor>
   </div>
   <script src="../../../node_modules/tinymce/tinymce.js"></script>
   <script src="../../../dist/tinymce-webcomponent.js"></script>
