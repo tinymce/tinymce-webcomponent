@@ -1,12 +1,12 @@
 #!groovy
 @Library('waluigi@release/7') _
 
-beehiveFlowBuild(
-  test: {
-    def platforms = [
-      [ os: "windows", browser: "chrome" ],
-      [ os: "windows", browser: "firefox" ]
-    ]
-    bedrockBrowsers(platforms: platforms, testDirs: ["src/test/ts/browser"])
-  }
+mixedBeehiveFlow(
+  container: [ resourceRequestMemory: '3Gi', resourceLimitMemory: '3Gi' ],
+  testPrefix: 'Tiny-WebComponent',
+  platforms: [
+    [ browser: 'chrome', headless: true ],
+    [ browser: 'firefox', provider: 'aws', buckets: 1 ],
+    [ browser: 'safari', provider: 'lambdatest', buckets: 1 ]
+  ],
 )
