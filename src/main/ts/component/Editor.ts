@@ -1,6 +1,7 @@
 import { Resolve, Obj, Fun, Global } from '@ephox/katamari';
 import { TinyMCE, Editor } from 'tinymce';
 import { ScriptLoader } from '../utils/ScriptLoader';
+import { TinyVer } from '@tinymce/miniature';
 type EditorOptions = Parameters<TinyMCE['init']>[0];
 type EventHandler = Parameters<Editor['on']>[1];
 
@@ -76,8 +77,10 @@ const configAttributes: Record<string, (v: string) => unknown> = {
   promotion: parseBooleanOrString, // boolean
 };
 
-const configRenames: Record<string, string> = {
-};
+const configRenames: Record<string, string> = {};
+
+// Function that checks if the disabled option is supported with the version used
+const isDisabledOptionSupported = (tinymce: TinyMCE): boolean => !TinyVer.isLessThan(tinymce, '7.6.0');
 
 class TinyMceEditor extends HTMLElement {
   private _status: Status;
@@ -108,7 +111,7 @@ class TinyMceEditor extends HTMLElement {
       'on-ObjectSelected', 'on-SetContent', 'on-Show', 'on-Submit', 'on-Undo',
       'on-VisualAid' ];
 
-    return [ 'form', 'readonly', 'autofocus', 'placeholder' ].concat(nativeEvents).concat(tinyEvents);
+    return [ 'form', 'readonly', 'autofocus', 'placeholder', 'disabled' ].concat(nativeEvents).concat(tinyEvents);
   }
 
   constructor() {
@@ -201,6 +204,9 @@ class TinyMceEditor extends HTMLElement {
     if (this.readonly) {
       config.readonly = true;
     }
+    if (this.disabled) {
+      config.disabled = true;
+    }
     if (this.autofocus) {
       config.auto_focus = true;
     }
@@ -242,6 +248,10 @@ class TinyMceEditor extends HTMLElement {
     const baseConfig = this._getConfig();
     const conf: EditorOptions = {
       ...baseConfig,
+      ...{
+        disabled: this.hasAttribute('disabled'),
+        readonly: this.hasAttribute('readonly')
+      },
       target,
       setup: (editor: Editor) => {
         this._editor = editor;
@@ -252,6 +262,12 @@ class TinyMceEditor extends HTMLElement {
           // this assignment ensures the attribute is in sync with the editor
           this.readonly = this.readonly;
         });
+
+        editor.on('DisabledStateChange', (_e: unknown) => {
+          // this assignment ensures the attribute is in sync with the editor
+          this.disabled = this.disabled;
+        });
+
         Obj.each(this._eventHandlers, (handler, event) => {
           if (handler !== undefined) {
             editor.on(event, handler);
@@ -293,6 +309,8 @@ class TinyMceEditor extends HTMLElement {
     if (oldValue !== newValue) {
       if (attribute === 'form') {
         this._updateForm();
+      } else if (attribute === 'disabled') {
+        this.disabled = newValue !== null;
       } else if (attribute === 'readonly') {
         this.readonly = newValue !== null;
       } else if (attribute === 'autofocus') {
@@ -352,6 +370,27 @@ class TinyMceEditor extends HTMLElement {
       if (this.hasAttribute('readonly')) {
         this.removeAttribute('readonly');
       }
+    }
+  }
+
+  get disabled(): boolean {
+    return this._editor
+      ? this._editor.options.get('disabled')
+      : this.hasAttribute('disabled');
+  }
+
+  set disabled(value: boolean) {
+    const tinymce = this._getTinymce?.();
+    const isVersionNewer = tinymce ? isDisabledOptionSupported(tinymce) : true;
+
+    if (this._editor && this._status === Status.Ready && isVersionNewer) {
+      this._editor.options.set('disabled', value);
+    }
+
+    if (value && !this.hasAttribute('disabled')) {
+      this.setAttribute('disabled', '');
+    } else if (!value && this.hasAttribute('disabled')) {
+      this.removeAttribute('disabled');
     }
   }
 
