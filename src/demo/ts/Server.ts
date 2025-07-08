@@ -45,14 +45,14 @@ const page = (editor1Value: string, editor2Value: string, editor3Value: string, 
     <body>
       <h1>TinyMCE WebComponent in Form</h1>
       <h2>Editor 1 (outside form with form attribute)</h2>
-      <tinymce-editor name="editor1" form="myform">${encodeHtmlEntities(editor1Value)}</tinymce-editor>
+      <tinymce-editor license_key="gpl" name="editor1" form="myform">${encodeHtmlEntities(editor1Value)}</tinymce-editor>
       <h2>Editor 2 (nested in shadow dom, outside form with form attribute)</h2>
-      <tinymce-editor-nested nested="2" name="editor2" form="myform" value="${encodeHtmlEntities(editor2Value)}"></tinymce-editor-nested>
+      <tinymce-editor-nested license_key="gpl" nested="2" name="editor2" form="myform" value="${encodeHtmlEntities(editor2Value)}"></tinymce-editor-nested>
       <form id="myform" method="POST" action="/">
         <h2>Editor 3 (inside form)</h2>
-        <tinymce-editor name="editor3">${encodeHtmlEntities(editor3Value)}</tinymce-editor>
+        <tinymce-editor license_key="gpl" name="editor3">${encodeHtmlEntities(editor3Value)}</tinymce-editor>
         <h2>Editor 4 (nested in shadow dom, inside form)</h2>
-        <tinymce-editor-nested nested="2" name="editor4" value="${encodeHtmlEntities(editor4Value)}"></tinymce-editor-nested>
+        <tinymce-editor-nested license_key="gpl" nested="2" name="editor4" value="${encodeHtmlEntities(editor4Value)}"></tinymce-editor-nested>
         <input type="submit" value="Submit">
       </form>
 
