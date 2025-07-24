@@ -8,7 +8,12 @@
 
   <body>
   <h1>TinyMCE Web Component Simple Demo Page</h1>
-  <tinymce-editor promotion="false"></tinymce-editor>
+  <script>
+    var editorConfig = {
+      license_key: 'gpl'
+    };
+  </script>
+  <tinymce-editor config="editorConfig" promotion="false"></tinymce-editor>
   <script src="../../../node_modules/tinymce/tinymce.js"></script>
   <script src="../../../dist/tinymce-webcomponent.js"></script>
   </body>

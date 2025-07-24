@@ -26,15 +26,18 @@
         editor.removeAttribute('readonly');
       }
     }
+    var editorConfig = {
+      license_key: 'gpl'
+    }
   </script>
   <h2>TinyMCE WebComponent Demo: Disabled and Readonly</h2>
   <div id="ephox-ui">
     <h2>Readonly mode</h2>
     <button onclick="toggleReadonly()">Toggle readonly</button>
-    <tinymce-editor id="readonly_mode" readonly></tinymce-editor>
+    <tinymce-editor config="editorConfig" id="readonly_mode" readonly></tinymce-editor>
     <h2>Disabled state</h2>
     <button onclick="toggleDisabled()" plugins="help">Toggle disabled</button>
-    <tinymce-editor id="disabled_state" disabled></tinymce-editor>
+    <tinymce-editor config="editorConfig" id="disabled_state" disabled></tinymce-editor>
   </div>
   <script src="../../../node_modules/tinymce/tinymce.js"></script>
   <script src="../../../dist/tinymce-webcomponent.js"></script>

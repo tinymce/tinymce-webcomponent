@@ -26,7 +26,13 @@
 
   <body>
   <h1>TinyMCE Web Component Events Demo Page</h1>
+  <script>
+   var editorConfig = {
+      license_key: 'gpl'
+    }
+  </script>
   <tinymce-editor
+    config="editorConfig"
     setup="editors.setupFn"
     on-Init="editors.initFn"
     on-Change="editors.changeFn"

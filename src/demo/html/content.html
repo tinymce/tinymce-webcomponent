@@ -8,7 +8,12 @@
 
   <body>
   <h1>TinyMCE Web Component Content Demo Page</h1>
-  <tinymce-editor promotion="false">
+  <script>
+    var editorConfig = {
+      license_key: 'gpl'
+    };
+  </script>
+  <tinymce-editor config="editorConfig" promotion="false">
 &lt;p style=&quot;text-align: center;&quot;&gt;&lt;span style=&quot;color: #bdc3c7;&quot;&gt;&amp;rarr; This is a full-featured editor demo. Please explore! &amp;larr;&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;text-align: center;&quot;&gt;&amp;nbsp;&lt;/p&gt;
 &lt;h2 style=&quot;text-align: center;&quot;&gt;TinyMCE is the world's most customizable, and flexible, rich text editor.&lt;/h2&gt;

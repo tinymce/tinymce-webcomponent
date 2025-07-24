@@ -287,7 +287,7 @@ class TinyMceEditor extends HTMLElement {
     if (src) {
       return src;
     }
-    const channel = this.getAttribute('channel') ?? '6';
+    const channel = this.getAttribute('channel') ?? '8';
     const apiKey = this.hasAttribute('api-key') ? this.getAttribute('api-key') : 'no-api-key';
     return `https://cdn.tiny.cloud/1/${apiKey}/tinymce/${channel}/tinymce.min.js`;
 
