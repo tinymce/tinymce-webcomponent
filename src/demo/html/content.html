@@ -7,25 +7,32 @@
   </head>
 
   <body>
-  <h1>TinyMCE Web Component Content Demo Page</h1>
-  <tinymce-editor promotion="false">
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;span style=&quot;color: #bdc3c7;&quot;&gt;&amp;rarr; This is a full-featured editor demo. Please explore! &amp;larr;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;text-align: center;&quot;&gt;&amp;nbsp;&lt;/p&gt;
-&lt;h2 style=&quot;text-align: center;&quot;&gt;TinyMCE is the world's most customizable, and flexible, rich text editor.&lt;/h2&gt;
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;strong&gt; &lt;span style=&quot;font-size: 14pt;&quot;&gt; &lt;span style=&quot;color: #7e8c8d; font-weight: 600;&quot;&gt; A featherweight download, TinyMCE can handle any challenge you throw at it. &lt;/span&gt; &lt;/span&gt; &lt;/strong&gt;&lt;/p&gt;
-&lt;p style=&quot;text-align: center;&quot;&gt;&amp;nbsp;&lt;/p&gt;
-&lt;table style=&quot;border-collapse: collapse; width: 85%; margin-left: auto; margin-right: auto; border: 0;&quot;&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&quot;width: 25%; text-align: center; padding: 7px;&quot;&gt;&lt;span style=&quot;color: #95a5a6;&quot;&gt;🛠 50+ Plugins&lt;/span&gt;&lt;/td&gt;
-&lt;td style=&quot;width: 25%; text-align: center; padding: 7px;&quot;&gt;&lt;span style=&quot;color: #95a5a6;&quot;&gt;💡 Premium Support&lt;/span&gt;&lt;/td&gt;
-&lt;td style=&quot;width: 25%; text-align: center; padding: 7px;&quot;&gt;&lt;span style=&quot;color: #95a5a6;&quot;&gt;🖍 Custom Skins&lt;/span&gt;&lt;/td&gt;
-&lt;td style=&quot;width: 25%; text-align: center; padding: 7px;&quot;&gt;&lt;span style=&quot;color: #95a5a6;&quot;&gt;⚙ Full API Access&lt;/span&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-  </tinymce-editor>
-  <script src="../../../node_modules/tinymce/tinymce.js"></script>
-  <script src="../../../dist/tinymce-webcomponent.js"></script>
+    <h1>TinyMCE Web Component Content Demo Page</h1>
+    
+    <script>
+      var editorConfig = {
+        license_key: 'gpl'
+      };
+    </script>
+
+    <tinymce-editor config="editorConfig" promotion="false">
+  &lt;p style=&quot;text-align: center;&quot;&gt;&lt;span style=&quot;color: #bdc3c7;&quot;&gt;&amp;rarr; This is a full-featured editor demo. Please explore! &amp;larr;&lt;/span&gt;&lt;/p&gt;
+  &lt;p style=&quot;text-align: center;&quot;&gt;&amp;nbsp;&lt;/p&gt;
+  &lt;h2 style=&quot;text-align: center;&quot;&gt;TinyMCE is the world's most customizable, and flexible, rich text editor.&lt;/h2&gt;
+  &lt;p style=&quot;text-align: center;&quot;&gt;&lt;strong&gt; &lt;span style=&quot;font-size: 14pt;&quot;&gt; &lt;span style=&quot;color: #7e8c8d; font-weight: 600;&quot;&gt; A featherweight download, TinyMCE can handle any challenge you throw at it. &lt;/span&gt; &lt;/span&gt; &lt;/strong&gt;&lt;/p&gt;
+  &lt;p style=&quot;text-align: center;&quot;&gt;&amp;nbsp;&lt;/p&gt;
+  &lt;table style=&quot;border-collapse: collapse; width: 85%; margin-left: auto; margin-right: auto; border: 0;&quot;&gt;
+  &lt;tbody&gt;
+  &lt;tr&gt;
+  &lt;td style=&quot;width: 25%; text-align: center; padding: 7px;&quot;&gt;&lt;span style=&quot;color: #95a5a6;&quot;&gt;🛠 50+ Plugins&lt;/span&gt;&lt;/td&gt;
+  &lt;td style=&quot;width: 25%; text-align: center; padding: 7px;&quot;&gt;&lt;span style=&quot;color: #95a5a6;&quot;&gt;💡 Premium Support&lt;/span&gt;&lt;/td&gt;
+  &lt;td style=&quot;width: 25%; text-align: center; padding: 7px;&quot;&gt;&lt;span style=&quot;color: #95a5a6;&quot;&gt;🖍 Custom Skins&lt;/span&gt;&lt;/td&gt;
+  &lt;td style=&quot;width: 25%; text-align: center; padding: 7px;&quot;&gt;&lt;span style=&quot;color: #95a5a6;&quot;&gt;⚙ Full API Access&lt;/span&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;/table&gt;
+    </tinymce-editor>
+    <script src="../../../node_modules/tinymce/tinymce.js"></script>
+    <script src="../../../dist/tinymce-webcomponent.js"></script>
   </body>
 </html>
