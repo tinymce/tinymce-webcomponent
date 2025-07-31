@@ -51,6 +51,6 @@
   "dependencies": {
     "@tinymce/miniature": "^6.0.0"
   },
-  "version": "2.2.1-rc",
+  "version": "2.3.0",
   "name": "@tinymce/tinymce-webcomponent"
 }
