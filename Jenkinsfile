@@ -9,4 +9,8 @@ mixedBeehiveFlow(
     [ browser: 'firefox', provider: 'aws', buckets: 1 ],
     [ browser: 'safari', provider: 'lambdatest', buckets: 1 ]
   ],
+  preparePublish: {
+    yarnInstall()
+    sh "yarn build"
+  }
 )
