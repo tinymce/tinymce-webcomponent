@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2.3.1 - 2025-08-11
+
+### Fixed
+- JS files were missing in the NPM package. # TINY-12257
+
 ## 2.3.0 - 2025-07-31
 
 ### Changed
