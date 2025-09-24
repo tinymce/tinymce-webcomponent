@@ -280,7 +280,7 @@ class TinyMceEditor extends HTMLElement {
     };
     // use target
     this._getTinymce().init(conf).catch((err) => {
-      /* eslint-disable no-console */
+      /* eslint-disable-next-line no-console */
       console.error('TinyMCE init failed', err);
     });
   }
