@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### Improved
+### Fixed
 - Editor initialization failure error handling. #INT-3366
 
 ## 2.3.1 - 2025-08-11
