@@ -31,7 +31,10 @@ UnitTest.asynctest('LoadTest', (success, failure) => {
         seenInit = true;
       };
     }),
-    Step.sync(() => makeTinymceElement({ setup: 'customElementTinymceSetup', 'on-init': 'customElementTinymceInit' }, '<p>Hello world</p>')),
+    Step.sync(() => makeTinymceElement({
+      'setup': 'customElementTinymceSetup',
+      'on-init': 'customElementTinymceInit'
+    }, '<p>Hello world</p>')),
     Waiter.sTryUntilPredicate('Waiting for editor setup', () => seenSetup),
     Waiter.sTryUntilPredicate('Waiting for editor init', () => seenInit),
     Step.sync(() => {

@@ -74,7 +74,9 @@ const page = (editor1Value: string, editor2Value: string, editor3Value: string, 
 const tinyPath = path.normalize(path.join(__dirname, '..', '..', '..', 'node_modules', 'tinymce'));
 const distPath = path.normalize(path.join(__dirname, '..', '..', '..', 'dist'));
 
+/* eslint-disable-next-line no-console */
 console.log('Serving /tinymce from: ' + tinyPath);
+/* eslint-disable-next-line no-console */
 console.log('Serving /dist from: ' + distPath);
 
 app.use('/tinymce', express.static(tinyPath));
@@ -89,4 +91,5 @@ app.post('/', (request, response) => {
   response.send(page(request.body.editor1 as string, request.body.editor2 as string, request.body.editor3 as string, request.body.editor4 as string));
 });
 
+/* eslint-disable-next-line no-console */
 app.listen(3000, () => console.log('http://localhost:3000/'));

@@ -43,8 +43,8 @@ const lookup = <T extends Record<string, unknown>, K extends keyof T>(values: T)
 
 const parseGlobal = Resolve.resolve;
 const parseString = Fun.identity;
-const parseFalseOrString = lookup({ 'false': false as const });
-const parseBooleanOrString = lookup({ 'true': true, 'false': false });
+const parseFalseOrString = lookup({ false: false });
+const parseBooleanOrString = lookup({ true: true, false: false });
 const parseNumberOrString = (value: string) => /^\d+$/.test(value) ? Number.parseInt(value, 10) : value;
 
 const configAttributes: Record<string, (v: string) => unknown> = {
@@ -279,7 +279,10 @@ class TinyMceEditor extends HTMLElement {
       }
     };
     // use target
-    this._getTinymce().init(conf);
+    this._getTinymce().init(conf).catch((err) => {
+      /* eslint-disable-next-line no-console */
+      console.error('TinyMCE init failed', err);
+    });
   }
 
   private _getTinymceSrc(): string {
@@ -451,4 +454,3 @@ class TinyMceEditor extends HTMLElement {
 export default () => {
   window.customElements.define('tinymce-editor', TinyMceEditor);
 };
-
