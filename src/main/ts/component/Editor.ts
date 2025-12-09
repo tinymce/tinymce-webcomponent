@@ -339,7 +339,7 @@ class TinyMceEditor extends HTMLElement {
     this._mutationObserver.disconnect();
     this._updateForm();
     if (this._editor) {
-        this._getTinymce().remove(this._editor)
+      this._getTinymce().remove(this._editor);
     }
   }
 
