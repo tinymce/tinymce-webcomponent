@@ -44,7 +44,7 @@ UnitTest.asynctest('LoadTest', (success, failure) => {
     }),
     Step.sync(() => removeTinymceElement()),
     Step.sync(() => {
-      Assertions.assertEq('Global TinyMCE not destroyed', true, Global.tinymce.get('example_id') === null);
+      Assertions.assertEq('The editor instance is removed', true, Global.tinymce.get('example_id') === null);
     })
   ], success, failure);
 });
