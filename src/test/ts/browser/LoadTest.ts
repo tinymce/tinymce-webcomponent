@@ -40,7 +40,7 @@ UnitTest.asynctest('LoadTest', (success, failure) => {
     Waiter.sTryUntilPredicate('Waiting for editor init', () => seenInit),
     Step.sync(() => {
       Assertions.assertHtmlStructure('', '<p>Hello world</p>', editorInstance.getContent() as string);
-      Assertions.assertEq('Global TinyMCE is not set', true, Global.tinymce.get('example_id') !== null);
+      Assertions.assertEq('An editor instance is registered', true, Global.tinymce.get('example_id') !== null);
     }),
     Step.sync(() => removeTinymceElement()),
     Step.sync(() => {
