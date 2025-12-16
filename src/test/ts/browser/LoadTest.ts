@@ -33,13 +33,18 @@ UnitTest.asynctest('LoadTest', (success, failure) => {
     }),
     Step.sync(() => makeTinymceElement({
       'setup': 'customElementTinymceSetup',
-      'on-init': 'customElementTinymceInit'
+      'on-init': 'customElementTinymceInit',
+      'id': 'example_id'
     }, '<p>Hello world</p>')),
     Waiter.sTryUntilPredicate('Waiting for editor setup', () => seenSetup),
     Waiter.sTryUntilPredicate('Waiting for editor init', () => seenInit),
     Step.sync(() => {
       Assertions.assertHtmlStructure('', '<p>Hello world</p>', editorInstance.getContent() as string);
+      Assertions.assertEq('Global TinyMCE is not set', true, Global.tinymce.get('example_id') !== null);
     }),
-    Step.sync(() => removeTinymceElement())
+    Step.sync(() => removeTinymceElement()),
+    Step.sync(() => {
+      Assertions.assertEq('Global TinyMCE not destroyed', true, Global.tinymce.get('example_id') === null);
+    })
   ], success, failure);
 });
