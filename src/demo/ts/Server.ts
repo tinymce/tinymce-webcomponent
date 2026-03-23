@@ -407,10 +407,21 @@ const page = (editor1Value: string, editor2Value: string, editor3Value: string, 
       <script>
         var generateConfig = window.fullConfig.generateConfig;
         var classicConfig = generateConfig({excludePlugins: ['tinydrive', 'uploadcare']});
+        var inlineConfig = generateConfig({excludePlugins: ['tinydrive', 'uploadcare'], overrideConfig: {inline: true}});
       </script>
       <h1>Classic Editor</h1>
       <tinymce-editor name="editor1" config="classConfig" api-key="451hc4rk1hb0l77jr4loyiutfx7k9fs0decaxvfma65mwulu" src="https://cdn.staging.tiny.cloud/1/451hc4rk1hb0l77jr4loyiutfx7k9fs0decaxvfma65mwulu/tinymce/8-testing/tinymce.min.js">${encodeHtmlEntities(editor1Value)}</tinymce-editor>
       <br>
+
+      <form id="myform" method="POST" action="/">
+        <h2>Editor 3 (inside form)</h2>
+        
+        <input type="submit" value="Submit">
+      </form>
+
+       <tinymce-editor name="editor2" form='myform' config="inlineConfig" api-key="451hc4rk1hb0l77jr4loyiutfx7k9fs0decaxvfma65mwulu" src="https://cdn.staging.tiny.cloud/1/451hc4rk1hb0l77jr4loyiutfx7k9fs0decaxvfma65mwulu/tinymce/8-testing/tinymce.min.js">${encodeHtmlEntities(editor1Value)}</tinymce-editor>
+
+
       <script src="/dist/tinymce-webcomponent.js"></script>
     </body>
   </html>

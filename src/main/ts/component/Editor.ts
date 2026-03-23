@@ -233,19 +233,24 @@ class TinyMceEditor extends HTMLElement {
   }
 
   private _doInit(): void {
+    const baseConfig = this._getConfig();
+
     this._status = Status.Initializing;
     // load
-    const target = document.createElement('textarea');
-    target.value = this.textContent ?? '';
+    const target = document.createElement(baseConfig.inline === true ? 'div' : 'textarea');
+    if (target.tagName.toLowerCase() === 'div') {
+      target.innerHTML = this.textContent ?? '';
+    } else {
+      (target as HTMLTextAreaElement).value = this.textContent ?? '';
+    }
     const attrId = this.attributes.getNamedItem('id')?.value;
     if (attrId) {
       target.id = attrId;
     }
-    if (this.placeholder !== null) {
-      target.placeholder = this.placeholder;
+    if (this.placeholder !== null && target.tagName.toLowerCase() === 'textarea') {
+      (target as HTMLTextAreaElement).placeholder = this.placeholder;
     }
     this._shadowDom.appendChild(target);
-    const baseConfig = this._getConfig();
     const conf: EditorOptions = {
       ...baseConfig,
       ...{
