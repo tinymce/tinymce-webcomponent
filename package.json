@@ -16,7 +16,7 @@
     "test": "bedrock-auto -b chrome-headless -d src/test/ts",
     "build": "tsc -p ./tsconfig.json && rollup -c rollup.config.js",
     "lint": "yarn eslint src/**/*.ts",
-    "serve": "yarn tsx src/demo/ts/Server.ts"
+    "serve": "yarn rollup -o src/demo/js/configs/full-config.js -f iife src/demo/js/configs/config.js -n fullConfig && yarn tsx src/demo/ts/Server.ts"
   },
   "keywords": [
     "TinyMCE",
