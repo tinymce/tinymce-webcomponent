@@ -407,13 +407,10 @@ const page = (editor1Value: string, editor2Value: string, editor3Value: string, 
       <script>
         var generateConfig = window.fullConfig.generateConfig;
         var classicConfig = generateConfig({excludePlugins: ['tinydrive', 'uploadcare']});
-        var inlineConfig = generateConfig({excludePlugins: ['tinydrive', 'uploadcare'], overrideConfig: {inline: true}});
-        console.log({inlineConfig, classicConfig})
       </script>
       <h1>Classic Editor</h1>
-      <tinymce-editor name="editor1" config="classConfig">${encodeHtmlEntities(editor1Value)}</tinymce-editor>
+      <tinymce-editor name="editor1" config="classConfig" api-key="451hc4rk1hb0l77jr4loyiutfx7k9fs0decaxvfma65mwulu" src="https://cdn.staging.tiny.cloud/1/451hc4rk1hb0l77jr4loyiutfx7k9fs0decaxvfma65mwulu/tinymce/8-testing/tinymce.min.js">${encodeHtmlEntities(editor1Value)}</tinymce-editor>
       <br>
-      <script src="/tinymce/tinymce.js"></script>
       <script src="/dist/tinymce-webcomponent.js"></script>
     </body>
   </html>
