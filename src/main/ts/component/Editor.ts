@@ -1,7 +1,7 @@
 import { Resolve, Obj, Fun, Global } from '@ephox/katamari';
 import { TinyMCE, Editor } from 'tinymce';
 import { ScriptLoader } from '../utils/ScriptLoader';
-import { TinyVer } from '@tinymce/miniature';
+
 type EditorOptions = Parameters<TinyMCE['init']>[0];
 type EventHandler = Parameters<Editor['on']>[1];
 
@@ -80,7 +80,8 @@ const configAttributes: Record<string, (v: string) => unknown> = {
 const configRenames: Record<string, string> = {};
 
 // Function that checks if the disabled option is supported with the version used
-const isDisabledOptionSupported = (tinymce: TinyMCE): boolean => !TinyVer.isLessThan(tinymce, '7.6.0');
+const isDisabledOptionSupported = (editor: Editor | undefined): boolean =>
+  !!editor && typeof editor.options?.set === 'function' && editor.options.isRegistered('disabled');
 
 class TinyMceEditor extends HTMLElement {
   private _status: Status;
@@ -386,10 +387,7 @@ class TinyMceEditor extends HTMLElement {
   }
 
   set disabled(value: boolean) {
-    const tinymce = this._getTinymce?.();
-    const isVersionNewer = tinymce ? isDisabledOptionSupported(tinymce) : true;
-
-    if (this._editor && this._status === Status.Ready && isVersionNewer) {
+    if (this._editor && this._status === Status.Ready && isDisabledOptionSupported(this._editor)) {
       this._editor.options.set('disabled', value);
     }
 

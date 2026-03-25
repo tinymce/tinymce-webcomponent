@@ -47,7 +47,5 @@
     "typescript": "~5.9.2",
     "webpack": "^5.75.0"
   },
-  "dependencies": {
-    "@tinymce/miniature": "^6.0.0"
-  }
+  "dependencies": {}
 }
