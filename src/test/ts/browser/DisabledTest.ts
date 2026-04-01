@@ -2,7 +2,7 @@ import { Assertions } from '@ephox/agar';
 import { before, describe, it, context, after, beforeEach, afterEach } from '@ephox/bedrock-client';
 import { Global } from '@ephox/katamari';
 import Editor from '../../../main/ts/component/Editor';
-import { VersionLoader } from "@tinymce/miniature";
+import { VersionLoader } from '@tinymce/miniature';
 import { deleteTinymce } from '../alien/Utils';
 import type { Editor as TinyMCEEditor } from 'tinymce';
 
@@ -22,7 +22,7 @@ describe('DisableTest', () => {
       delete Global.tinymceTestConfig;
       deleteTinymce();
     });
-    
+
     beforeEach(() => {
       if (!window.customElements.get('tinymce-editor')) {
         Editor();
@@ -32,9 +32,9 @@ describe('DisableTest', () => {
     afterEach(() => {
       document.querySelectorAll('tinymce-editor').forEach((el) => el.remove());
     });
-  }
+  };
 
-  const pCreateEditor = 
+  const pCreateEditor =
     (attrs: Record<string, string> = {}, onSetup?: (editor: any) => void): Promise<{ el: EditorElement; editor: TinyMCEEditor }> => new Promise((resolve) => {
       const setupFnName = nextId();
       const initFnName = nextId();
@@ -60,8 +60,8 @@ describe('DisableTest', () => {
       }
 
       document.body.appendChild(el);
-  });
-    
+    });
+
   context('When using with Tinymce < 7.6', () => {
     setupVersionContext('7.5.0');
 
@@ -81,7 +81,7 @@ describe('DisableTest', () => {
       const hasDisabledAtt = el.hasAttribute('disabled');
       Assertions.assertEq('Editor should be disabled', expected, editor.options.get('disabled'));
       Assertions.assertEq(`disabled attribute should be ${expected ? 'present' : 'absent'}`, expected, hasDisabledAtt);
-    }
+    };
 
     it('Editor should be disabled when disabled attribute is present', async () => {
       const { el, editor } = await pCreateEditor({ disabled: '' });

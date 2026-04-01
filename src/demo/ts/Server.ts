@@ -45,7 +45,27 @@ const page = (editor1Value: string, editor2Value: string, editor3Value: string, 
     <body>
       <h1>TinyMCE WebComponent in Form</h1>
       <h2>Editor 1 (outside form with form attribute)</h2>
-      <tinymce-editor name="editor1" form="myform" license="gpl" api-key="prsghhxax677rv082a1zj9b7cgjuoaqysf7h8ayxi5ao43ha">${encodeHtmlEntities(editor1Value)}</tinymce-editor>
+      <tinymce-editor name="editor1" form="myform">${encodeHtmlEntities(editor1Value)}</tinymce-editor>
+      <h2>Editor 2 (nested in shadow dom, outside form with form attribute)</h2>
+      <tinymce-editor-nested nested="2" name="editor2" form="myform" value="${encodeHtmlEntities(editor2Value)}"></tinymce-editor-nested>
+      <form id="myform" method="POST" action="/">
+        <h2>Editor 3 (inside form)</h2>
+        <tinymce-editor name="editor3">${encodeHtmlEntities(editor3Value)}</tinymce-editor>
+        <h2>Editor 4 (nested in shadow dom, inside form)</h2>
+        <tinymce-editor-nested nested="2" name="editor4" value="${encodeHtmlEntities(editor4Value)}"></tinymce-editor-nested>
+        <input type="submit" value="Submit">
+      </form>
+
+      <h2>Posted Content</h2>
+      <h3>Editor 1 value</h3>
+      <div style="border: 1px solid black">${editor1Value}</div>
+      <h3>Editor 2 value</h3>
+      <div style="border: 1px solid black">${editor2Value}</div>
+      <h3>Editor 3 value</h3>
+      <div style="border: 1px solid black">${editor3Value}</div>
+      <h3>Editor 4 value</h3>
+      <div style="border: 1px solid black">${editor4Value}</div>
+      <script src="/tinymce/tinymce.js"></script>
       <script src="/dist/tinymce-webcomponent.js"></script>
     </body>
   </html>

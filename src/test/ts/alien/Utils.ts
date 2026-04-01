@@ -2,7 +2,6 @@ import { Attribute, Remove, SelectorFilter, SugarElement } from '@ephox/sugar';
 import { ScriptLoader } from 'src/main/ts/utils/ScriptLoader';
 import { Arr, Global, Strings } from '@ephox/katamari';
 
-
 export const deleteTinymce = () => {
   ScriptLoader.reinitialize();
 
@@ -18,4 +17,4 @@ export const deleteTinymce = () => {
   ]);
 
   Arr.each(elements, Remove.remove);
-}
+};
