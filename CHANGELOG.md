@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## Changed
+
+- Moved `@tinymce/miniature` to devDependency. #INT-3358
+
 ## 2.3.2 - 2025-12-18
 
 ### Fixed
@@ -25,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 2.2.0 - 2025-05-29
 
 ### Added
-- New `readonly` attribute that can be used to toggle the editor's `readonly` mode. #TINY-11911
+- New `disabled` attribute that can be used to toggle the editor's `disabled` option. #INT-11911
 
 ## 2.1.0 - 2024-01-08
 
