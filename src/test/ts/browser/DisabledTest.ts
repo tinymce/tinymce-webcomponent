@@ -1,115 +1,123 @@
 import { Assertions } from '@ephox/agar';
-import { before, after, describe, it, context, afterEach } from '@ephox/bedrock-client';
+import { before, describe, it, context, after, beforeEach, afterEach } from '@ephox/bedrock-client';
 import { Global } from '@ephox/katamari';
 import Editor from '../../../main/ts/component/Editor';
 import { VersionLoader } from "@tinymce/miniature";
 import { deleteTinymce } from '../alien/Utils';
+import type { Editor as TinyMCEEditor } from 'tinymce';
 
 type EditorElement = HTMLElement & { disabled: boolean };
 
 describe('DisableTest', () => {
-  context('disabled option is not supported (<TinyMCE 7.6)', () => {
-    
-  });
+  let uid = 0;
+  const nextId = () => `_disabled_test_fn_${uid++}`;
 
-  context('disbaled option is supported', () => {
+  const setupVersionContext = (version: string) => {
     before(async () => {
-      await VersionLoader.pLoadVersion('8');
-      Global.tinymce.baseURL = '/node_modules/tinymce';
+      await VersionLoader.pLoadVersion(version);
       Global.tinymceTestConfig = { license_key: 'gpl' };
-      if (!window.customElements.get('tinymce-editor')) {
-        Editor();
-      } 
     });
 
     after(() => {
-      document.querySelectorAll('tinymce-editor').forEach((el) => el.remove());
+      delete Global.tinymceTestConfig;
       deleteTinymce();
+    });
+    
+    beforeEach(() => {
+      if (!window.customElements.get('tinymce-editor')) {
+        Editor();
+      }
     });
 
     afterEach(() => {
       document.querySelectorAll('tinymce-editor').forEach((el) => el.remove());
     });
+  }
 
-    let uid = 0;
-    const nextId = () => `_disabled_test_fn_${uid++}`;
+  const pCreateEditor = 
+    (attrs: Record<string, string> = {}, onSetup?: (editor: any) => void): Promise<{ el: EditorElement; editor: TinyMCEEditor }> => new Promise((resolve) => {
+      const setupFnName = nextId();
+      const initFnName = nextId();
+      let editorInstance: any;
 
-    const pCreateEditor = (
-      attrs: Record<string, string> = {},
-      onSetup?: (editor: any) => void
-    ): Promise<{ el: EditorElement; editor: any }> =>
-      new Promise((resolve) => {
-        const setupFnName = nextId();
-        const initFnName = nextId();
-        let editorInstance: any;
+      Global[setupFnName] = (editor: any) => {
+        delete Global[setupFnName];
+        editorInstance = editor;
+        onSetup?.(editor);
+      };
 
-        Global[setupFnName] = (editor: any) => {
-          delete Global[setupFnName];
-          editorInstance = editor;
-          onSetup?.(editor);
-        };
+      Global[initFnName] = () => {
+        delete Global[initFnName];
+        resolve({ el: el as EditorElement, editor: editorInstance });
+      };
 
-        Global[initFnName] = () => {
-          delete Global[initFnName];
-          resolve({ el: el as EditorElement, editor: editorInstance });
-        };
+      const el = document.createElement('tinymce-editor');
+      el.setAttribute('config', 'tinymceTestConfig');
+      el.setAttribute('setup', setupFnName);
+      el.setAttribute('on-init', initFnName);
+      for (const [ key, value ] of Object.entries(attrs)) {
+        el.setAttribute(key, value);
+      }
 
-        const el = document.createElement('tinymce-editor');
-        el.setAttribute('config', 'tinymceTestConfig');
-        el.setAttribute('setup', setupFnName);
-        el.setAttribute('on-init', initFnName);
-        for (const [ key, value ] of Object.entries(attrs)) {
-          el.setAttribute(key, value);
-        }
-        document.body.appendChild(el);
-      });
+      document.body.appendChild(el);
+  });
+    
+  context('When using with Tinymce < 7.6', () => {
+    setupVersionContext('7.5.0');
 
-    const pWaitForDisabledChange = (editor: any): Promise<void> =>
+    it('Editor should be not be disabled when disabled attribute is present', async () => {
+      const { editor } = await pCreateEditor({ disabled: '' });
+      Assertions.assertEq('Editor should be in design mode', true, editor.mode.get() === 'design');
+    });
+  });
+
+  context('When using with Tinymce >= 7.6', () => {
+    setupVersionContext('8');
+
+    const pWaitForDisabledStateChange = (editor: any): Promise<void> =>
       new Promise((resolve) => editor.once('DisabledStateChange', resolve));
 
-    it('Editor initializes with disabled attribute — disabled option is true', async () => {
+    const assertDisabledState = (el: EditorElement, editor: TinyMCEEditor, expected: boolean) => {
+      const hasDisabledAtt = el.hasAttribute('disabled');
+      Assertions.assertEq('Editor should be disabled', expected, editor.options.get('disabled'));
+      Assertions.assertEq(`disabled attribute should be ${expected ? 'present' : 'absent'}`, expected, hasDisabledAtt);
+    }
+
+    it('Editor should be disabled when disabled attribute is present', async () => {
       const { el, editor } = await pCreateEditor({ disabled: '' });
-      Assertions.assertEq('Editor option should be disabled on init', true, editor.options.get('disabled'));
-      Assertions.assertEq('Element should have disabled attribute', true, el.hasAttribute('disabled'));
+      assertDisabledState(el, editor, true);
     });
 
-    it('Editor initializes without disabled attribute — disabled option is false', async () => {
+    it('Editor is not disabled when disabled attribute is absent', async () => {
       const { el, editor } = await pCreateEditor();
-      Assertions.assertEq('Editor option should not be disabled on init', false, editor.options.get('disabled'));
-      Assertions.assertEq('Element should not have disabled attribute', false, el.hasAttribute('disabled'));
+      assertDisabledState(el, editor, false);
     });
 
     it('Setting disabled attribute after init disables the editor', async () => {
       const { el, editor } = await pCreateEditor();
-      Assertions.assertEq('Editor should not be disabled initially', false, editor.options.get('disabled'));
+      assertDisabledState(el, editor, false);
       el.setAttribute('disabled', '');
-      await pWaitForDisabledChange(editor);
-      Assertions.assertEq('Editor option should be disabled after setAttribute', true, editor.options.get('disabled'));
-      Assertions.assertEq('Element should have disabled attribute', true, el.hasAttribute('disabled'));
+      await pWaitForDisabledStateChange(editor);
+      assertDisabledState(el, editor, true);
     });
 
     it('Removing disabled attribute after init enables the editor', async () => {
       const { el, editor } = await pCreateEditor({ disabled: '' });
-      Assertions.assertEq('Editor should be disabled initially', true, editor.options.get('disabled'));
+      assertDisabledState(el, editor, true);
       el.removeAttribute('disabled');
-      await pWaitForDisabledChange(editor);
-      Assertions.assertEq('Editor option should not be disabled after removeAttribute', false, editor.options.get('disabled'));
-      Assertions.assertEq('Element should not have disabled attribute', false, el.hasAttribute('disabled'));
+      await pWaitForDisabledStateChange(editor);
+      assertDisabledState(el, editor, false);
     });
 
-    it('Setting disabled property directly syncs editor option and attribute', async () => {
+    it('Updating disabled property directly syncs editor option and attribute', async () => {
       const { el, editor } = await pCreateEditor();
       Assertions.assertEq('disabled property should be false initially', false, el.disabled);
       el.disabled = true;
-      await pWaitForDisabledChange(editor);
-      Assertions.assertEq('disabled property should be true', true, el.disabled);
-      Assertions.assertEq('disabled attribute should be present', true, el.hasAttribute('disabled'));
-      Assertions.assertEq('editor option should be true', true, editor.options.get('disabled'));
+      await pWaitForDisabledStateChange(editor);
+      assertDisabledState(el, editor, true);
       el.disabled = false;
-      await pWaitForDisabledChange(editor);
-      Assertions.assertEq('disabled property should be false', false, el.disabled);
-      Assertions.assertEq('disabled attribute should be absent', false, el.hasAttribute('disabled'));
-      Assertions.assertEq('editor option should be false', false, editor.options.get('disabled'));
+      await pWaitForDisabledStateChange(editor);
+      assertDisabledState(el, editor, false);
     });
   });
 });

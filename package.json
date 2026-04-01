@@ -49,6 +49,7 @@
     "webpack": "^5.75.0"
   },
   "dependencies": {
+    "tinymce-7.5.0": "npm:tinymce@7.5.0",
     "tinymce-8": "npm:tinymce@^8"
   }
 }
