@@ -2,19 +2,26 @@ import { Assertions } from '@ephox/agar';
 import { before, describe, after, it } from '@ephox/bedrock-client';
 import { Global } from '@ephox/katamari';
 import { createTinymceElement, deleteTinymce, registerCustomElementIfNot, removeTinymceElement } from '../alien/Utils';
-import { VersionLoader } from '@tinymce/miniature';
-import { Editor } from 'tinymce';
+import { TinyVer, VersionLoader } from '@tinymce/miniature';
+import { Editor, TinyMCE } from 'tinymce';
+
+declare const tinymce: TinyMCE;
 
 describe('LoadTest', () => {
   before(async () => {
-    await VersionLoader.pLoadVersion('8');
+    try {
+      await VersionLoader.pLoadVersion('8');
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.trace('Failed to load Tinymce 8: ' + err);
+    }
+    Assertions.assertEq('Tinymce 8 should be loaded', '8', TinyVer.getVersion(tinymce).major + '');
     registerCustomElementIfNot();
     Global.tinymceTestConfig = { license_key: 'gpl' };
   });
 
   after(() => {
     delete Global.tinymceTestConfig;
-    removeTinymceElement();
     deleteTinymce();
   });
 
@@ -58,5 +65,6 @@ describe('LoadTest', () => {
     Assertions.assertEq('An editor instance is registered', true, Global.tinymce.get('example_id') !== null);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     Assertions.assertHtmlStructure('The editor has the correct content', '<p>Hello world</p>', editorInstance!.getContent() as string);
+    removeTinymceElement();
   });
 });

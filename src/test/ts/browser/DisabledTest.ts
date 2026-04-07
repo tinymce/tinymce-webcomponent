@@ -45,10 +45,6 @@ describe('DisableTest', () => {
         editorInstance = editor;
       };
 
-      // Global[initFnName] = () => {
-      //   resolve({ element: tinymceEl, editor: editorInstance });
-      // };
-
       tinymceEl = createTinymceElement({
         'setup': setupFnName,
         'on-init': initFnName,
@@ -87,6 +83,71 @@ describe('DisableTest', () => {
     });
 
     after(() => {
+      deleteTinymce();
+    });
+
+    const pWaitForDisabledStateChange = (editor: any): Promise<void> =>
+      new Promise((resolve) => editor.once('DisabledStateChange', resolve));
+
+    const assertDisabledState = (el: SugarElement<EditorElement>, editor: TinyMCEEditor, expected: boolean) => {
+      const hasDisabledAtt = Attribute.has(el, 'disabled');
+      Assertions.assertEq('Editor should be disabled', expected, editor.options.get('disabled'));
+      Assertions.assertEq(`disabled attribute should be ${expected ? 'present' : 'absent'}`, expected, hasDisabledAtt);
+    };
+
+    it('Editor should be disabled when disabled attribute is present', async () => {
+      const { element, editor } = await pCreateEditor({ disabled: '' });
+      assertDisabledState(element, editor, true);
+    });
+
+    it('Editor is not disabled when disabled attribute is absent', async () => {
+      const { element, editor } = await pCreateEditor();
+      assertDisabledState(element, editor, false);
+    });
+
+    it('Setting disabled attribute after init disables the editor', async () => {
+      const { element, editor } = await pCreateEditor();
+      assertDisabledState(element, editor, false);
+      Attribute.set(element, 'disabled', '');
+      await pWaitForDisabledStateChange(editor);
+      assertDisabledState(element, editor, true);
+    });
+
+    it('Removing disabled attribute after init enables the editor', async () => {
+      const { element, editor } = await pCreateEditor({ disabled: '' });
+      assertDisabledState(element, editor, true);
+      Attribute.remove(element, 'disabled');
+      await pWaitForDisabledStateChange(editor);
+      assertDisabledState(element, editor, false);
+    });
+
+    it('Updating disabled property directly syncs editor option and attribute', async () => {
+      const { element, editor } = await pCreateEditor();
+      Assertions.assertEq('disabled property should be false initially', false, element.dom.disabled);
+      element.dom.disabled = true;
+      await pWaitForDisabledStateChange(editor);
+      assertDisabledState(element, editor, true);
+      element.dom.disabled = false;
+      await pWaitForDisabledStateChange(editor);
+      assertDisabledState(element, editor, false);
+    });
+  });
+
+  context('When using with Tinymce >= 8', () => {
+    before(async () => {
+      await VersionLoader.pLoadVersion('8');
+      Assertions.assertEq('Tinymce 8 should be loaded', '8', TinyVer.getVersion(tinymce).major + '');
+    });
+
+    afterEach(() => {
+      // eslint-disable-next-line no-console
+      console.log('Removing editor element');
+      removeTinymceElement();
+    });
+
+    after(() => {
+      // eslint-disable-next-line no-console
+      console.log('Deleting tinymce global');
       deleteTinymce();
     });
 
