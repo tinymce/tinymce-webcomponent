@@ -26,8 +26,8 @@
   "license": "MIT",
   "devDependencies": {
     "@ephox/agar": "^8.0.1",
-    "@ephox/bedrock-client": "^15.0.0",
-    "@ephox/bedrock-server": "^15.0.0",
+    "@ephox/bedrock-client": "^16.0.0",
+    "@ephox/bedrock-server": "^16.2.0",
     "@ephox/katamari": "^9.1.5",
     "@ephox/sugar": "^9.2.1",
     "@ephox/swag": "^4.6.0",
