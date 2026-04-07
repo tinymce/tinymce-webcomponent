@@ -1,12 +1,12 @@
 import { Attribute, Remove, SelectorFilter, SugarElement } from '@ephox/sugar';
 import { ScriptLoader } from 'src/main/ts/utils/ScriptLoader';
-import { Arr, Global, Strings } from '@ephox/katamari';
+import { Arr, Strings, Optional, Fun } from '@ephox/katamari';
+import * as Globals from '@tinymce/miniature/lib/main/ts/loader/Globals';
+import Editor from 'src/main/ts/component/Editor';
 
 export const deleteTinymce = () => {
   ScriptLoader.reinitialize();
-
-  delete Global.tinymce;
-  delete Global.tinyMCE;
+  Globals.deleteTinymceGlobals();
 
   const hasTinyUri = (attrName: string) => (elm: SugarElement<Element>) =>
     Attribute.getOpt(elm, attrName).exists((src) => Strings.contains(src, 'tinymce'));
@@ -17,4 +17,12 @@ export const deleteTinymce = () => {
   ]);
 
   Arr.each(elements, Remove.remove);
+};
+
+export const removeTinymceElement = () => {
+  Arr.map(SelectorFilter.all('tinymce-editor'), Remove.remove);
+};
+
+export const registerCustomElementIfNot = () => {
+  Optional.from(customElements.get('tinymce-editor')).fold(Editor, Fun.noop);
 };
