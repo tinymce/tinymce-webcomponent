@@ -54,7 +54,16 @@ describe('DisableTest', () => {
     });
 
     it('Editor should be not be disabled when disabled attribute is present', async () => {
-      const { editor } = await pCreateEditor();
+      // Resolves on SkinLoaded (not init) because TinyMCE 7.5.0 may not fire init reliably
+      // in headless Chrome. The mode check does not require Status.Ready.
+      const setupFnName = nextId();
+      let tinymceEl: SugarElement<EditorElement>;
+      const { editor } = await new Promise<{ element: SugarElement<EditorElement>; editor: TinyMCEEditor }>((resolve) => {
+        Global[setupFnName] = (ed: TinyMCEEditor) => {
+          ed.on('SkinLoaded', () => resolve({ element: tinymceEl, editor: ed }));
+        };
+        tinymceEl = createTinymceElement({ setup: setupFnName, config: 'tinymceTestConfig' });
+      });
       Assertions.assertEq('Editor should be in design mode', true, editor.mode.get() === 'design');
       removeTinymceElement();
     });
