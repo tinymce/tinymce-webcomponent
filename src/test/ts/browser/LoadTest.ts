@@ -4,12 +4,15 @@ import { Global } from '@ephox/katamari';
 import { createTinymceElement, deleteTinymce, registerCustomElementIfNot, removeTinymceElement } from '../alien/Utils';
 import { TinyVer, VersionLoader } from '@tinymce/miniature';
 import { Editor, TinyMCE } from 'tinymce';
+// eslint-disable-next-line @tinymce/no-direct-imports
+import * as Loader from '@tinymce/miniature/lib/main/ts/loader/Loader';
 
 declare const tinymce: TinyMCE;
 
 describe('LoadTest', () => {
   before(async () => {
     try {
+      Loader.unload();
       await VersionLoader.pLoadVersion('8');
     } catch (err) {
       // eslint-disable-next-line no-console
