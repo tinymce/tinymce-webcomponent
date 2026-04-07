@@ -32,7 +32,7 @@ describe('DisableTest', () => {
 
       Global[setupFnName] = (editor: Editor) => {
         editor.on('SkinLoaded', () => {
-          setTimeout(() => resolve({ element: tinymceEl, editor: editorInstance }), 0);
+          setTimeout(() => resolve({ element: tinymceEl, editor: editorInstance }), 1000);
           // if (editor.licenseKeyManager) {
           //   editor.licenseKeyManager.validate({}).then(() => {
           //     resolve({ element: tinymceEl, editor: editorInstance });
