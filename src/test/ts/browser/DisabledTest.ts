@@ -25,34 +25,18 @@ describe('DisableTest', () => {
   const pCreateEditor =
     (attrs: Record<string, string> = {}): Promise<{ element: SugarElement<EditorElement>; editor: TinyMCEEditor }> => new Promise((resolve) => {
       const setupFnName = nextId();
-      const initFnName = nextId();
       // eslint-disable-next-line prefer-const
       let tinymceEl: SugarElement<EditorElement>;
-      let editorInstance: any;
 
       Global[setupFnName] = (editor: Editor) => {
-        editor.on('SkinLoaded', () => {
-          if (editor.licenseKeyManager) {
-            editor.licenseKeyManager.validate({}).then(() => {
-              resolve({ element: tinymceEl, editor: editorInstance });
-            }).catch(() => {
-              resolve({ element: tinymceEl, editor: editorInstance });
-            });
-          } else {
-            resolve({ element: tinymceEl, editor: editorInstance });
-          }
+        editor.on('init', () => {
+          resolve({ element: tinymceEl, editor });
         });
-        editorInstance = editor;
       };
 
-      // Global[initFnName] = () => {
-      //   resolve({ element: tinymceEl, editor: editorInstance });
-      // };
-
       tinymceEl = createTinymceElement({
-        'setup': setupFnName,
-        'on-init': initFnName,
-        'config': 'tinymceTestConfig',
+        setup: setupFnName,
+        config: 'tinymceTestConfig',
         ...attrs
       });
     });

@@ -25,17 +25,8 @@ describe('LoadTest', () => {
 
     await new Promise((resolve) => {
       Global.customElementTinymceSetup = (editor: Editor) => {
-        editor.on('SkinLoaded', () => {
-          if (editor.licenseKeyManager) {
-            editor.licenseKeyManager.validate({}).then(() => {
-              resolve({});
-              // resolve({ editor, vm });
-            }).catch(() => {
-              resolve({});
-            });
-          } else {
-            resolve({});
-          }
+        editor.on('init', () => {
+          resolve({});
         });
         seenSetup = true;
         editorInstance = editor;
