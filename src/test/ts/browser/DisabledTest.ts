@@ -26,6 +26,7 @@ describe('DisableTest', () => {
     (attrs: Record<string, string> = {}): Promise<{ element: SugarElement<EditorElement>; editor: TinyMCEEditor }> => new Promise((resolve) => {
       const setupFnName = nextId();
       const initFnName = nextId();
+      // eslint-disable-next-line prefer-const
       let tinymceEl: SugarElement<EditorElement>;
       let editorInstance: any;
 
