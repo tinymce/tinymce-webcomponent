@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Assertions } from '@ephox/agar';
 import { before, describe, after, it } from '@ephox/bedrock-client';
 import { Global } from '@ephox/katamari';
