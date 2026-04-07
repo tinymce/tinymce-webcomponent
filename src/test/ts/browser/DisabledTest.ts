@@ -25,18 +25,34 @@ describe('DisableTest', () => {
   const pCreateEditor =
     (attrs: Record<string, string> = {}): Promise<{ element: SugarElement<EditorElement>; editor: TinyMCEEditor }> => new Promise((resolve) => {
       const setupFnName = nextId();
+      const initFnName = nextId();
       // eslint-disable-next-line prefer-const
       let tinymceEl: SugarElement<EditorElement>;
+      let editorInstance: any;
 
       Global[setupFnName] = (editor: Editor) => {
-        editor.on('init', () => {
-          resolve({ element: tinymceEl, editor });
+        editor.on('SkinLoaded', () => {
+          if (editor.licenseKeyManager) {
+            editor.licenseKeyManager.validate({}).then(() => {
+              resolve({ element: tinymceEl, editor: editorInstance });
+            }).catch(() => {
+              resolve({ element: tinymceEl, editor: editorInstance });
+            });
+          } else {
+            resolve({ element: tinymceEl, editor: editorInstance });
+          }
         });
+        editorInstance = editor;
       };
 
+      // Global[initFnName] = () => {
+      //   resolve({ element: tinymceEl, editor: editorInstance });
+      // };
+
       tinymceEl = createTinymceElement({
-        setup: setupFnName,
-        config: 'tinymceTestConfig',
+        'setup': setupFnName,
+        'on-init': initFnName,
+        'config': 'tinymceTestConfig',
         ...attrs
       });
     });
@@ -54,16 +70,7 @@ describe('DisableTest', () => {
     });
 
     it('Editor should be not be disabled when disabled attribute is present', async () => {
-      // Resolves on SkinLoaded (not init) because TinyMCE 7.5.0 may not fire init reliably
-      // in headless Chrome. The mode check does not require Status.Ready.
-      const setupFnName = nextId();
-      let tinymceEl: SugarElement<EditorElement>;
-      const { editor } = await new Promise<{ element: SugarElement<EditorElement>; editor: TinyMCEEditor }>((resolve) => {
-        Global[setupFnName] = (ed: TinyMCEEditor) => {
-          ed.on('SkinLoaded', () => resolve({ element: tinymceEl, editor: ed }));
-        };
-        tinymceEl = createTinymceElement({ setup: setupFnName, config: 'tinymceTestConfig' });
-      });
+      const { editor } = await pCreateEditor();
       Assertions.assertEq('Editor should be in design mode', true, editor.mode.get() === 'design');
       removeTinymceElement();
     });
