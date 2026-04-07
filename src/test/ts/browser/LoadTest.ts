@@ -7,9 +7,12 @@ import { Editor } from 'tinymce';
 
 describe('LoadTest', () => {
   before(async () => {
+    console.log('[LoadTest] before: calling pLoadVersion');
     await VersionLoader.pLoadVersion('8');
+    console.log('[LoadTest] before: pLoadVersion done');
     registerCustomElementIfNot();
     Global.tinymceTestConfig = { license_key: 'gpl' };
+    console.log('[LoadTest] before: done');
   });
 
   after(() => {
@@ -23,9 +26,13 @@ describe('LoadTest', () => {
     let seenInit = false;
     let editorInstance: Editor | undefined;
 
+    console.log('[LoadTest] it: starting promise');
     await new Promise((resolve) => {
       Global.customElementTinymceSetup = (editor: Editor) => {
+        console.log('[LoadTest] setup called');
+        editor.on('SkinLoaded', () => console.log('[LoadTest] SkinLoaded fired'));
         editor.on('init', () => {
+          console.log('[LoadTest] init fired');
           resolve({});
         });
         seenSetup = true;
@@ -36,6 +43,7 @@ describe('LoadTest', () => {
         seenInit = true;
         // resolve({});
       };
+      console.log('[LoadTest] creating element');
       createTinymceElement({
         'setup': 'customElementTinymceSetup',
         'on-init': 'customElementTinymceInit',
