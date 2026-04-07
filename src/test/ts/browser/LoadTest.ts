@@ -1,24 +1,12 @@
 import { Assertions } from '@ephox/agar';
 import { before, describe, after, it } from '@ephox/bedrock-client';
 import { Global } from '@ephox/katamari';
-import { createTinymceElement, deleteTinymce, registerCustomElementIfNot, removeTinymceElement } from '../alien/Utils';
-import { TinyVer, VersionLoader } from '@tinymce/miniature';
-import { Editor, TinyMCE } from 'tinymce';
-// eslint-disable-next-line @tinymce/no-direct-imports
-import * as Loader from '@tinymce/miniature/lib/main/ts/loader/Loader';
-
-declare const tinymce: TinyMCE;
+import { createTinymceElement, deleteTinymce, pLoadTinymce, registerCustomElementIfNot, removeTinymceElement } from '../alien/Utils';
+import { Editor } from 'tinymce';
 
 describe('LoadTest', () => {
   before(async () => {
-    try {
-      Loader.unload();
-      await VersionLoader.pLoadVersion('8');
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.trace('Failed to load Tinymce 8: ' + err);
-    }
-    Assertions.assertEq('Tinymce 8 should be loaded', '8', TinyVer.getVersion(tinymce).major + '');
+    await pLoadTinymce('8');
     registerCustomElementIfNot();
     Global.tinymceTestConfig = { license_key: 'gpl' };
   });
@@ -31,27 +19,16 @@ describe('LoadTest', () => {
   it('Should load the editor and execute setup and init callbacks', async () => {
     let seenSetup = false;
     let seenInit = false;
-    let editorInstance: Editor | undefined;
+    let editorInstance: Editor;
 
     await new Promise((resolve) => {
       Global.customElementTinymceSetup = (editor: Editor) => {
-        editor.on('SkinLoaded', () => {
-          if (editor.licenseKeyManager) {
-            editor.licenseKeyManager.validate({}).then(() => {
-              resolve({});
-              // resolve({ editor, vm });
-            }).catch(() => {
-              resolve({});
-            });
-          } else {
-            resolve({});
-          }
-        });
         seenSetup = true;
         editorInstance = editor;
       };
       Global.customElementTinymceInit = (_evt: unknown) => {
         seenInit = true;
+        resolve({});
       };
       createTinymceElement({
         'setup': 'customElementTinymceSetup',

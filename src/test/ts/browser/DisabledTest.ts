@@ -3,7 +3,7 @@ import { before, describe, it, context, after, afterEach } from '@ephox/bedrock-
 import { Global } from '@ephox/katamari';
 import type { Editor, TinyMCE, Editor as TinyMCEEditor } from 'tinymce';
 import { VersionLoader, TinyVer } from '@tinymce/miniature';
-import { createTinymceElement, deleteTinymce, registerCustomElementIfNot, removeTinymceElement } from '../alien/Utils';
+import { createTinymceElement, deleteTinymce, pLoadTinymce, registerCustomElementIfNot, removeTinymceElement } from '../alien/Utils';
 import { Attribute, SugarElement } from '@ephox/sugar';
 
 type EditorElement = HTMLElement & { disabled?: boolean };
@@ -31,18 +31,13 @@ describe('DisableTest', () => {
       let editorInstance: any;
 
       Global[setupFnName] = (editor: Editor) => {
-        editor.on('SkinLoaded', () => {
-          if (editor.licenseKeyManager) {
-            editor.licenseKeyManager.validate({}).then(() => {
-              resolve({ element: tinymceEl, editor: editorInstance });
-            }).catch(() => {
-              resolve({ element: tinymceEl, editor: editorInstance });
-            });
-          } else {
-            resolve({ element: tinymceEl, editor: editorInstance });
-          }
-        });
         editorInstance = editor;
+      };
+      Global[initFnName] = () => {
+        resolve({
+          element: tinymceEl,
+          editor: editorInstance
+        });
       };
 
       tinymceEl = createTinymceElement({
@@ -55,7 +50,7 @@ describe('DisableTest', () => {
 
   context('When using with Tinymce < 7.6', () => {
     before(async () => {
-      await VersionLoader.pLoadVersion('7.5.0');
+      await pLoadTinymce('7.5.0');
       Assertions.assertEq('Tinymce 7.5.0 should be loaded',
         '7.5.0',
         TinyVer.getVersion(tinymce).major + '.' + TinyVer.getVersion(tinymce).minor + '.' + TinyVer.getVersion(tinymce).patch);
