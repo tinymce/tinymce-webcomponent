@@ -47,10 +47,8 @@ describe('LoadTest', () => {
         seenSetup = true;
         editorInstance = editor;
       };
-
       Global.customElementTinymceInit = (_evt: unknown) => {
         seenInit = true;
-        // resolve({});
       };
       createTinymceElement({
         'setup': 'customElementTinymceSetup',
