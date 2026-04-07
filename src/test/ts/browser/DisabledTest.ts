@@ -32,15 +32,16 @@ describe('DisableTest', () => {
 
       Global[setupFnName] = (editor: Editor) => {
         editor.on('SkinLoaded', () => {
-          if (editor.licenseKeyManager) {
-            editor.licenseKeyManager.validate({}).then(() => {
-              resolve({ element: tinymceEl, editor: editorInstance });
-            }).catch(() => {
-              resolve({ element: tinymceEl, editor: editorInstance });
-            });
-          } else {
-            resolve({ element: tinymceEl, editor: editorInstance });
-          }
+          setTimeout(() => resolve({ element: tinymceEl, editor: editorInstance }), 0);
+          // if (editor.licenseKeyManager) {
+          //   editor.licenseKeyManager.validate({}).then(() => {
+          //     resolve({ element: tinymceEl, editor: editorInstance });
+          //   }).catch(() => {
+          //     resolve({ element: tinymceEl, editor: editorInstance });
+          //   });
+          // } else {
+          //   resolve({ element: tinymceEl, editor: editorInstance });
+          // }
         });
         editorInstance = editor;
       };
