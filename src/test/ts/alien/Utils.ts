@@ -25,7 +25,7 @@ export const removeTinymceElement = () => {
 };
 
 export const registerCustomElementIfNot = () => {
-  Optional.from(window.customElements.get('tinymce-editor')).fold(Editor, Fun.noop);
+  Optional.from(window.customElements?.get('tinymce-editor')).fold(Editor, Fun.noop);
 };
 
 export const createTinymceElement = (attrs: Record<string, string>, content?: string) => {

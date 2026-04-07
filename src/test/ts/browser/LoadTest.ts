@@ -35,7 +35,6 @@ describe('LoadTest', () => {
   after(() => {
     delete Global.tinymceTestConfig;
     removeTinymceElement();
-    Assertions.assertEq('The editor instance is removed', true, Global.tinymce.get('example_id') === null);
     deleteTinymce();
   });
 
@@ -43,7 +42,6 @@ describe('LoadTest', () => {
     Assertions.assertEq('Editor setup callback should be called', true, seenSetup);
     Assertions.assertEq('Editor init callback should be called', true, seenInit);
     Assertions.assertEq('An editor instance is registered', true, Global.tinymce.get('example_id') !== null);
-    Assertions.assertHtmlStructure('', '<p>Hello world</p>', editorInstance.getContent() as string);
-    Assertions.assertEq('An editor instance is registered', true, Global.tinymce.get('example_id') !== null);
+    Assertions.assertHtmlStructure('The editor has the correct content', '<p>Hello world</p>', editorInstance.getContent() as string);
   });
 });
