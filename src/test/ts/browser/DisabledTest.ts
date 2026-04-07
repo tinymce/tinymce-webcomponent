@@ -1,7 +1,7 @@
 import { Assertions } from '@ephox/agar';
 import { before, describe, it, context, after, afterEach } from '@ephox/bedrock-client';
 import { Global } from '@ephox/katamari';
-import type { TinyMCE, Editor as TinyMCEEditor } from 'tinymce';
+import type { Editor, TinyMCE, Editor as TinyMCEEditor } from 'tinymce';
 import { VersionLoader, TinyVer } from '@tinymce/miniature';
 import { createTinymceElement, deleteTinymce, registerCustomElementIfNot, removeTinymceElement } from '../alien/Utils';
 import { Attribute, SugarElement } from '@ephox/sugar';
@@ -30,13 +30,26 @@ describe('DisableTest', () => {
       let tinymceEl: SugarElement<EditorElement>;
       let editorInstance: any;
 
-      Global[setupFnName] = (editor: any) => {
+      Global[setupFnName] = (editor: Editor) => {
+        editor.on('SkinLoaded', () => {
+          if (editor.licenseKeyManager) {
+            editor.licenseKeyManager.validate({}).then(() => {
+              resolve({ element: tinymceEl, editor: editorInstance });
+              // resolve({ editor, vm });
+            });
+          } else {
+            resolve({ element: tinymceEl, editor: editorInstance });
+          }
+
+          // No need to wait for the init event to resolve the promise as the init callback will be called after init is complete, but we want to ensure the editor instance is set before any assertions are made in the test.
+          // editorInstance = editor;
+        });
         editorInstance = editor;
       };
 
-      Global[initFnName] = () => {
-        resolve({ element: tinymceEl, editor: editorInstance });
-      };
+      // Global[initFnName] = () => {
+      //   resolve({ element: tinymceEl, editor: editorInstance });
+      // };
 
       tinymceEl = createTinymceElement({
         'setup': setupFnName,
