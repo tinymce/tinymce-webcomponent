@@ -43,13 +43,12 @@
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "express": "^5.2.1",
     "rollup": "^4.24.0",
-    "tinymce": "^8",
+    "tinymce": "^8.4.0",
+    "tinymce-7.5.0": "npm:tinymce@7.5.0",
+    "tinymce-8": "npm:tinymce@8",
     "tsx": "^4.21.0",
     "typescript": "~5.9.2",
     "webpack": "^5.75.0"
   },
-  "dependencies": {
-    "tinymce-7.5.0": "npm:tinymce@7.5.0",
-    "tinymce-8": "npm:tinymce@^8"
-  }
+  "dependencies": {}
 }
