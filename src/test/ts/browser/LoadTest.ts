@@ -30,6 +30,8 @@ describe('LoadTest', () => {
             editor.licenseKeyManager.validate({}).then(() => {
               resolve({});
               // resolve({ editor, vm });
+            }).catch(() => {
+              resolve({});
             });
           } else {
             resolve({});
@@ -37,7 +39,7 @@ describe('LoadTest', () => {
         });
         seenSetup = true;
         editorInstance = editor;
-      }
+      };
 
       Global.customElementTinymceInit = (_evt: unknown) => {
         seenInit = true;

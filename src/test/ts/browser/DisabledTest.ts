@@ -35,14 +35,12 @@ describe('DisableTest', () => {
           if (editor.licenseKeyManager) {
             editor.licenseKeyManager.validate({}).then(() => {
               resolve({ element: tinymceEl, editor: editorInstance });
-              // resolve({ editor, vm });
+            }).catch(() => {
+              resolve({ element: tinymceEl, editor: editorInstance });
             });
           } else {
             resolve({ element: tinymceEl, editor: editorInstance });
           }
-
-          // No need to wait for the init event to resolve the promise as the init callback will be called after init is complete, but we want to ensure the editor instance is set before any assertions are made in the test.
-          // editorInstance = editor;
         });
         editorInstance = editor;
       };
