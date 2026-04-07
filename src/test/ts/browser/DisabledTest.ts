@@ -16,8 +16,8 @@ describe('DisableTest', () => {
     registerCustomElementIfNot();
     Global.tinymceTestConfig = { license_key: 'gpl' };
   });
-  
-  after(() => {   
+
+  after(() => {
     delete Global.tinymceTestConfig;
   });
 
@@ -49,13 +49,15 @@ describe('DisableTest', () => {
   context('When using with Tinymce < 7.6', () => {
     before(async () => {
       await VersionLoader.pLoadVersion('7.5.0');
-      Assertions.assertEq('Tinymce 7.5.0 should be loaded', '7.5.0', TinyVer.getVersion(tinymce).major + '.' + TinyVer.getVersion(tinymce).minor + '.' + TinyVer.getVersion(tinymce).patch);
+      Assertions.assertEq('Tinymce 7.5.0 should be loaded',
+        '7.5.0',
+        TinyVer.getVersion(tinymce).major + '.' + TinyVer.getVersion(tinymce).minor + '.' + TinyVer.getVersion(tinymce).patch);
     });
 
     after(() => {
       deleteTinymce();
     });
-  
+
     it('Editor should be not be disabled when disabled attribute is present', async () => {
       const { editor } = await pCreateEditor();
       Assertions.assertEq('Editor should be in design mode', true, editor.mode.get() === 'design');

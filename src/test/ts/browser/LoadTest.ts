@@ -1,7 +1,7 @@
 import { Assertions } from '@ephox/agar';
 import { SugarElement, Attribute, SugarBody, Insert, TextContent } from '@ephox/sugar';
 import { before, describe, after, it } from '@ephox/bedrock-client';
-import {  Global } from '@ephox/katamari';
+import { Global } from '@ephox/katamari';
 import { deleteTinymce, registerCustomElementIfNot, removeTinymceElement } from '../alien/Utils';
 import { VersionLoader } from '@tinymce/miniature';
 

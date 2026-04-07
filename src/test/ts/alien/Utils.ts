@@ -1,6 +1,7 @@
 import { Attribute, Remove, SelectorFilter, SugarElement } from '@ephox/sugar';
 import { ScriptLoader } from 'src/main/ts/utils/ScriptLoader';
 import { Arr, Strings, Optional, Fun } from '@ephox/katamari';
+// eslint-disable-next-line @tinymce/no-direct-imports
 import * as Globals from '@tinymce/miniature/lib/main/ts/loader/Globals';
 import Editor from 'src/main/ts/component/Editor';
 
@@ -24,5 +25,5 @@ export const removeTinymceElement = () => {
 };
 
 export const registerCustomElementIfNot = () => {
-  Optional.from(customElements.get('tinymce-editor')).fold(Editor, Fun.noop);
+  Optional.from(window.customElements.get('tinymce-editor')).fold(Editor, Fun.noop);
 };
