@@ -17,7 +17,7 @@ describe('LoadTest', () => {
     deleteTinymce();
   });
 
-  it.only('Should load the editor and execute setup and init callbacks', async () => {
+  it('Should load the editor and execute setup and init callbacks', async () => {
     let seenSetup = false;
     let seenInit = false;
     let editorInstance: Editor | undefined;
