@@ -3,10 +3,7 @@ import { ScriptLoader } from 'src/main/ts/utils/ScriptLoader';
 import { Arr, Strings, Optional, Fun } from '@ephox/katamari';
 // eslint-disable-next-line @tinymce/no-direct-imports
 import * as Globals from '@tinymce/miniature/lib/main/ts/loader/Globals';
-// eslint-disable-next-line @tinymce/no-direct-imports
-import * as Loader from '@tinymce/miniature/lib/main/ts/loader/Loader';
 import Editor from 'src/main/ts/component/Editor';
-import { VersionLoader } from '@tinymce/miniature';
 
 export const deleteTinymce = () => {
   ScriptLoader.reinitialize();
@@ -39,11 +36,4 @@ export const createTinymceElement = (attrs: Record<string, string>, content?: st
   }
   document.body.appendChild(ce.dom);
   return ce;
-};
-
-export const pLoadTinymce = async (version: string) => {
-  // Clear the URL cached in the loader to ensure a fresh load of the requested version,
-  // otherwise the loader will skip loading if the same version was previously loaded
-  Loader.unload();
-  await VersionLoader.pLoadVersion(version);
 };

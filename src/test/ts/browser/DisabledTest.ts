@@ -3,7 +3,7 @@ import { before, describe, it, context, after, afterEach } from '@ephox/bedrock-
 import { Global } from '@ephox/katamari';
 import type { Editor, TinyMCE, Editor as TinyMCEEditor } from 'tinymce';
 import { VersionLoader, TinyVer } from '@tinymce/miniature';
-import { createTinymceElement, deleteTinymce, pLoadTinymce, registerCustomElementIfNot, removeTinymceElement } from '../alien/Utils';
+import { createTinymceElement, deleteTinymce, registerCustomElementIfNot, removeTinymceElement } from '../alien/Utils';
 import { Attribute, SugarElement } from '@ephox/sugar';
 
 type EditorElement = HTMLElement & { disabled?: boolean };
@@ -25,32 +25,25 @@ describe('DisableTest', () => {
   const pCreateEditor =
     (attrs: Record<string, string> = {}): Promise<{ element: SugarElement<EditorElement>; editor: TinyMCEEditor }> => new Promise((resolve) => {
       const setupFnName = nextId();
-      const initFnName = nextId();
-      // eslint-disable-next-line prefer-const
+      // eslint-disable-next-line  prefer-const
       let tinymceEl: SugarElement<EditorElement>;
-      let editorInstance: any;
 
       Global[setupFnName] = (editor: Editor) => {
-        editorInstance = editor;
-      };
-      Global[initFnName] = () => {
-        resolve({
-          element: tinymceEl,
-          editor: editorInstance
+        editor.on('SkinLoaded', () => {
+          setTimeout(() => resolve({ element: tinymceEl, editor }), 500);
         });
       };
 
       tinymceEl = createTinymceElement({
-        'setup': setupFnName,
-        'on-init': initFnName,
-        'config': 'tinymceTestConfig',
+        setup: setupFnName,
+        config: 'tinymceTestConfig',
         ...attrs
       });
     });
 
   context('When using with Tinymce < 7.6', () => {
     before(async () => {
-      await pLoadTinymce('7.5.0');
+      await VersionLoader.pLoadVersion('7.5.0');
       Assertions.assertEq('Tinymce 7.5.0 should be loaded',
         '7.5.0',
         TinyVer.getVersion(tinymce).major + '.' + TinyVer.getVersion(tinymce).minor + '.' + TinyVer.getVersion(tinymce).patch);
