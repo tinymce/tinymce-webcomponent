@@ -1,17 +1,8 @@
 import { Assertions } from '@ephox/agar';
-import { SugarElement, Attribute, SugarBody, Insert, TextContent } from '@ephox/sugar';
 import { before, describe, after, it } from '@ephox/bedrock-client';
 import { Global } from '@ephox/katamari';
-import { deleteTinymce, registerCustomElementIfNot, removeTinymceElement } from '../alien/Utils';
+import { createTinymceElement, deleteTinymce, registerCustomElementIfNot, removeTinymceElement } from '../alien/Utils';
 import { VersionLoader } from '@tinymce/miniature';
-
-const makeTinymceElement = (attrs: Record<string, string>, content: string) => {
-  const ce = SugarElement.fromTag('tinymce-editor');
-  Attribute.set(ce, 'channel', '8');
-  Attribute.setAll(ce, attrs);
-  TextContent.set(ce, content);
-  Insert.append(SugarBody.body(), ce);
-};
 
 describe('LoadTest', () => {
   let seenSetup = false;
@@ -32,7 +23,7 @@ describe('LoadTest', () => {
         seenInit = true;
         resolve({});
       };
-      makeTinymceElement({
+      createTinymceElement({
         'setup': 'customElementTinymceSetup',
         'on-init': 'customElementTinymceInit',
         'config': 'tinymceTestConfig',

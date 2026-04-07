@@ -27,3 +27,13 @@ export const removeTinymceElement = () => {
 export const registerCustomElementIfNot = () => {
   Optional.from(window.customElements.get('tinymce-editor')).fold(Editor, Fun.noop);
 };
+
+export const createTinymceElement = (attrs: Record<string, string>, content?: string) => {
+  const ce = SugarElement.fromTag('tinymce-editor');
+  Attribute.setAll(ce, attrs);
+  if (content) {
+    ce.dom.innerHTML = content;
+  }
+  document.body.appendChild(ce.dom);
+  return ce;
+};
