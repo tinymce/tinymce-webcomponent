@@ -3,7 +3,7 @@ import { before, describe, it, context, after, afterEach } from '@ephox/bedrock-
 import { Global } from '@ephox/katamari';
 import type { Editor, TinyMCE, Editor as TinyMCEEditor } from 'tinymce';
 import { VersionLoader, TinyVer } from '@tinymce/miniature';
-import { createTinymceElement, deleteTinymce, registerCustomElementIfNot, removeTinymceElement } from '../alien/Utils';
+import { createTinymceElement, deleteTinymce, registerCustomElementIfNot, removeTinymceElements } from '../alien/Utils';
 import { Attribute, SugarElement } from '@ephox/sugar';
 
 type EditorElement = HTMLElement & { disabled?: boolean };
@@ -56,7 +56,7 @@ describe('DisableTest', () => {
     it('Editor should be not be disabled when disabled attribute is present', async () => {
       const { editor } = await pCreateEditor();
       Assertions.assertEq('Editor should be in design mode', true, editor.mode.get() === 'design');
-      removeTinymceElement();
+      removeTinymceElements();
     });
   });
 
@@ -67,7 +67,7 @@ describe('DisableTest', () => {
     });
 
     afterEach(() => {
-      removeTinymceElement();
+      removeTinymceElements();
     });
 
     after(() => {

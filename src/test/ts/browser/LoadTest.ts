@@ -1,7 +1,7 @@
 import { Assertions } from '@ephox/agar';
 import { before, describe, after, it } from '@ephox/bedrock-client';
 import { Global } from '@ephox/katamari';
-import { createTinymceElement, deleteTinymce, registerCustomElementIfNot, removeTinymceElement } from '../alien/Utils';
+import { createTinymceElement, deleteTinymce, registerCustomElementIfNot, removeTinymceElements } from '../alien/Utils';
 import { Editor } from 'tinymce';
 import { VersionLoader } from '@tinymce/miniature';
 
@@ -43,6 +43,6 @@ describe('LoadTest', () => {
     Assertions.assertEq('Editor init callback should be called', true, seenInit);
     Assertions.assertEq('An editor instance is registered', true, Global.tinymce.get('example_id') !== null);
     Assertions.assertHtmlStructure('The editor has the correct content', '<p>Hello world</p>', editor.getContent() as string);
-    removeTinymceElement();
+    removeTinymceElements();
   });
 });

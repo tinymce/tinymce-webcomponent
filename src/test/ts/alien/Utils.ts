@@ -20,8 +20,8 @@ export const deleteTinymce = () => {
   Arr.each(elements, Remove.remove);
 };
 
-export const removeTinymceElement = () => {
-  Arr.map(SelectorFilter.all('tinymce-editor'), Remove.remove);
+export const removeTinymceElements = () => {
+  Arr.each(SelectorFilter.all('tinymce-editor'), Remove.remove);
 };
 
 export const registerCustomElementIfNot = () => {
