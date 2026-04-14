@@ -1,6 +1,6 @@
 {
   "description": "Official TinyMCE Web Component",
-  "version": "2.4.0",
+  "version": "2.4.1-rc",
   "name": "@tinymce/tinymce-webcomponent",
   "repository": {
     "url": "https://github.com/tinymce/tinymce-webcomponent"
