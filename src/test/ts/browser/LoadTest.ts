@@ -1,50 +1,48 @@
-import { Pipeline, Step, Waiter, Assertions } from '@ephox/agar';
-import { SugarElement, Attribute, SugarBody, Insert, Remove, SelectorFilter, TextContent } from '@ephox/sugar';
-import { UnitTest } from '@ephox/bedrock-client';
-import Editor from '../../../main/ts/component/Editor';
-import { Arr, Global } from '@ephox/katamari';
+import { Assertions } from '@ephox/agar';
+import { before, describe, after, it } from '@ephox/bedrock-client';
+import { Global } from '@ephox/katamari';
+import { createTinymceElement, deleteTinymce, registerCustomElementIfNot, removeTinymceElements } from '../alien/Utils';
+import { Editor } from 'tinymce';
+import { VersionLoader } from '@tinymce/miniature';
 
-const makeTinymceElement = (attrs: Record<string, string>, content: string) => {
-  const ce = SugarElement.fromTag('tinymce-editor');
-  Attribute.set(ce, 'channel', '8');
-  Attribute.setAll(ce, attrs);
-  TextContent.set(ce, content);
-  Insert.append(SugarBody.body(), ce);
-};
+describe('LoadTest', () => {
+  before(async () => {
+    await VersionLoader.pLoadVersion('8');
+    registerCustomElementIfNot();
+    Global.tinymceTestConfig = { license_key: 'gpl' };
+  });
 
-const removeTinymceElement = () => {
-  Arr.map(SelectorFilter.all('tinymce-editor'), Remove.remove);
-};
+  after(() => {
+    delete Global.tinymceTestConfig;
+    deleteTinymce();
+  });
 
-UnitTest.asynctest('LoadTest', (success, failure) => {
-  Editor();
-  let seenSetup = false;
-  let seenInit = false;
-  let editorInstance: any;
-  Pipeline.async('', [
-    Step.sync(() => {
-      Global.customElementTinymceSetup = (editor: any) => {
+  it('Should load the editor and execute setup and init callbacks', async () => {
+    let seenSetup = false;
+    let seenInit = false;
+
+    const { editor } = await new Promise<{ editor: Editor }>((resolve) => {
+      Global.customElementTinymceSetup = (ed: Editor) => {
         seenSetup = true;
-        editorInstance = editor;
+        ed.on('SkinLoaded', () => {
+          setTimeout(() => resolve({ editor: ed }), 500);
+        });
       };
       Global.customElementTinymceInit = (_evt: unknown) => {
         seenInit = true;
       };
-    }),
-    Step.sync(() => makeTinymceElement({
-      'setup': 'customElementTinymceSetup',
-      'on-init': 'customElementTinymceInit',
-      'id': 'example_id'
-    }, '<p>Hello world</p>')),
-    Waiter.sTryUntilPredicate('Waiting for editor setup', () => seenSetup),
-    Waiter.sTryUntilPredicate('Waiting for editor init', () => seenInit),
-    Step.sync(() => {
-      Assertions.assertHtmlStructure('', '<p>Hello world</p>', editorInstance.getContent() as string);
-      Assertions.assertEq('An editor instance is registered', true, Global.tinymce.get('example_id') !== null);
-    }),
-    Step.sync(() => removeTinymceElement()),
-    Step.sync(() => {
-      Assertions.assertEq('The editor instance is removed', true, Global.tinymce.get('example_id') === null);
-    })
-  ], success, failure);
+      createTinymceElement({
+        'setup': 'customElementTinymceSetup',
+        'on-init': 'customElementTinymceInit',
+        'config': 'tinymceTestConfig',
+        'id': 'example_id'
+      }, '<p>Hello world</p>');
+    });
+
+    Assertions.assertEq('Editor setup callback should be called', true, seenSetup);
+    Assertions.assertEq('Editor init callback should be called', true, seenInit);
+    Assertions.assertEq('An editor instance is registered', true, Global.tinymce.get('example_id') !== null);
+    Assertions.assertHtmlStructure('The editor has the correct content', '<p>Hello world</p>', editor.getContent() as string);
+    removeTinymceElements();
+  });
 });
