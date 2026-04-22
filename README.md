@@ -15,5 +15,5 @@ TinyMCE for Web Components provides the Custom Element, building on the experime
 
 Once the TinyMCE custom element is installed on a web page, creating an editor instance is as simple as adding a `<tinymce-editor></tinymce-editor>` tag to the page. This tag is used in place of calling tinymce.init(). Many of the standard configuration properties can be specified as attributes to this tag, instead of using JavaScript code.
 
-TinyMCE for Web Components is available for free under an Apache 2.0 license, and can be installed via NPM. It is compatible with open source TinyMCE, Tiny Cloud, and TinyMCE commercial self-hosted offerings. 
+TinyMCE for Web Components is available for free under an MIT license, and can be installed via NPM. It is compatible with open source TinyMCE, Tiny Cloud, and TinyMCE commercial self-hosted offerings. 
 At this stage, TinyMCE for Web Components is an experimental integration - we would love to hear your [feedback](https://github.com/tinymce/tinymce-webcomponent/issues) on how it can be improved.
