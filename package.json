@@ -19,10 +19,17 @@
     "serve": "yarn tsx src/demo/ts/Server.ts"
   },
   "keywords": [
-    "TinyMCE",
-    "webcomponent"
+    "tinymce",
+    "webcomponent",
+    "component",
+    "editor",
+    "wysiwyg",
+    "rich-text-editor",
+    "html",
+    "javascript",
+    "browser"
   ],
-  "author": "Tiny Technologies",
+  "author": "Ephox Corporation DBA Tiny Technologies, Inc.",
   "license": "MIT",
   "devDependencies": {
     "@ephox/agar": "^8.0.1",
