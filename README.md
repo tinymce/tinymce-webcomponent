@@ -2,10 +2,9 @@
 
 ## About
 
-`tinymce-webcomponent` component is a thin wrapper for [TinyMCE](https://www.npmjs.com/package/tinymce) that makes integrating TinyMCE into a web page easy and seamless.
+Official Web Component for TinyMCE, the rich text editor. It wraps TinyMCE as a `<tinymce-editor>` custom element, used in place of calling `tinymce.init()`. By default, it pulls TinyMCE from the Tiny Cloud CDN unless configured to use a different setup, such as self-hosting the [tinymce NPM package](https://www.npmjs.com/package/tinymce).
 
-Once installed, creating an editor instance is as simple as adding a `<tinymce-editor></tinymce-editor>` tag to the page. This tag is used in place of calling tinymce.init(). Many of the standard configuration properties can be specified as attributes to this tag, instead of using JavaScript code.
-
+Many of the standard configuration properties can be specified as attributes on the `<tinymce-editor>` tag, instead of using JavaScript code.
 
 ## Quickstart
 
