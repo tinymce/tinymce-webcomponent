@@ -10,27 +10,24 @@ Many of the standard configuration properties can be specified as attributes on 
 
 ### Cloud CDN
 
-In your project:
-
 1. [Sign up for a Tiny Cloud account](https://www.tiny.cloud/pricing/) to receive a Tiny Cloud API key.
-2. Include the following script tag to load the Web Component from the CDN:
+1. Then in your project:
+    1. Include the following script tag to load the Web Component from the CDN:
 
-```html
-<script src="https://cdn.jsdelivr.net/npm/@tinymce/tinymce-webcomponent/dist/tinymce-webcomponent.min.js"></script>
-```
+        ```html
+        <script src="https://cdn.jsdelivr.net/npm/@tinymce/tinymce-webcomponent/dist/tinymce-webcomponent.min.js"></script>
+        ```
+    1. Add the `tinymce-editor` element with your API key and configuration as HTML attributes:
 
-3. Add the `tinymce-editor` element with your API key and configuration as HTML attributes:
-
-```html
-<tinymce-editor
-  api-key="your-api-key"
-  plugins="lists link image table code help wordcount"
->
-  <p>Welcome to TinyMCE</p>
-</tinymce-editor>
-```
-
-4. Update the `api-key` attribute to include your Tiny Cloud API key.
+        ```html
+        <tinymce-editor
+          api-key="your-api-key"
+          plugins="lists link image table code help wordcount"
+        >
+          <p>Welcome to TinyMCE</p>
+        </tinymce-editor>
+        ```
+    1. Update the `api-key` attribute to include your Tiny Cloud API key.
 
 For more information: [Using TinyMCE with Web Components - Cloud CDN](https://www.tiny.cloud/docs/tinymce/latest/webcomponent-cloud/)
 
