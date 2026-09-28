@@ -1,10 +1,8 @@
-# Official Web Component for TinyMCE
+# Official Web Component integration for TinyMCE
 
 ## About
 
-Official Web Component for TinyMCE, the rich text editor. It wraps TinyMCE as a `<tinymce-editor>` custom element, used in place of calling `tinymce.init()`. By default, it pulls TinyMCE from the Tiny Cloud CDN unless configured to use a different setup, such as self-hosting the [tinymce NPM package](https://www.npmjs.com/package/tinymce).
-
-Many of the standard configuration properties can be specified as attributes on the `<tinymce-editor>` tag, instead of using JavaScript code.
+Official Web Component integration for TinyMCE, the rich text editor. Web Components are a set of native browser APIs — Custom Elements, Shadow DOM, and HTML Templates — that let you build reusable, framework-agnostic HTML elements. This package wraps TinyMCE as a `<tinymce-editor>` custom element, used in place of calling `tinymce.init()`. Once installed on a page, creating an editor is as simple as adding a `<tinymce-editor></tinymce-editor>` tag, with most configuration properties specified as attributes instead of JavaScript. By default, it pulls TinyMCE from the Tiny Cloud CDN unless configured to use a different setup, such as self-hosting the [tinymce NPM package](https://www.npmjs.com/package/tinymce).
 
 ## Quickstart
 
@@ -12,7 +10,7 @@ Many of the standard configuration properties can be specified as attributes on 
 
 1. [Sign up for a Tiny Cloud account](https://www.tiny.cloud/pricing/) to receive a Tiny Cloud API key.
 1. Then in your project:
-    1. Include the following script tag to load the Web Component from the CDN:
+    1. Include the following script tag to load the Web Component integration from the CDN:
 
         ```html
         <script src="https://cdn.jsdelivr.net/npm/@tinymce/tinymce-webcomponent/dist/tinymce-webcomponent.min.js"></script>
@@ -29,11 +27,11 @@ Many of the standard configuration properties can be specified as attributes on 
         ```
     1. Update the `api-key` attribute to include your Tiny Cloud API key.
 
-For more information: [Using TinyMCE with Web Components - Cloud CDN](https://www.tiny.cloud/docs/tinymce/latest/webcomponent-cloud/)
+For more information: [Using TinyMCE with Web Component - Cloud CDN](https://www.tiny.cloud/docs/tinymce/latest/webcomponent-cloud/)
 
 ### Self hosted via NPM package
 
-Using TinyMCE from NPM with the Web Component requires a couple of extra steps. See the documentation for more information: [Using TinyMCE with Web Components - Self hosted via NPM](https://www.tiny.cloud/docs/tinymce/latest/webcomponent-pm/)
+Using TinyMCE from NPM with the Web Component integration requires a couple of extra steps. See the documentation for more information: [Using TinyMCE with Web Component - Self hosted via NPM](https://www.tiny.cloud/docs/tinymce/latest/webcomponent-pm/)
 
 ## Detailed documentation
 
