@@ -1,19 +1,49 @@
+# Official Web Component integration for TinyMCE
 
-# Official TinyMCE Web Component
+## About
 
-Web Components are a set of built-in browser capabilities that let developers create custom HTML elements in a similar manner to what is available in frameworks like React or Angular.
+Official Web Component integration for TinyMCE, the rich text editor. Web Components are a set of native browser APIs — Custom Elements, Shadow DOM, and HTML Templates — that let you build reusable, framework-agnostic HTML elements. This package wraps TinyMCE as a `<tinymce-editor>` custom element, used in place of calling `tinymce.init()`. Once installed on a page, creating an editor is as simple as adding a `<tinymce-editor></tinymce-editor>` tag, with many of the standard configuration properties can be specified as attributes. By default, it pulls TinyMCE from the Tiny Cloud CDN unless configured to use a different setup, such as self-hosting the [tinymce NPM package](https://www.npmjs.com/package/tinymce).
 
-Web Components comprise 3 basic capabilities:
-- Shadow DOM
-- Custom Elements
-- HTML Templating
+## Quickstart
 
-Shadow DOM provides the ability to create a "sandboxed" area of a web page, in a similar manner to iframes. An HTML element can have a "shadow root" attached to it, which is a tree of elements that are separate to the main document. Shadow roots are useful for having an area of the document that doesn't inherit styles from the main document. This is particularly handy for rich components like TinyMCE which have their own complex stylesheets and have to fit into any of our customer's web apps. 
+### Cloud CDN
 
-Custom Elements allow a developer to register a new tag/element that can be included in the HTML of the page. The custom element's behaviour is defined in JavaScript code and then registered for use in HTML.
-TinyMCE for Web Components provides the Custom Element, building on the experimental Shadow DOM support added in TinyMCE 5.4. 
+1. [Sign up for a Tiny Cloud account](https://www.tiny.cloud/pricing/) to receive a Tiny Cloud API key.
+1. Then in your project:
+    1. Include the following script tag to load the Web Component integration from the CDN:
 
-Once the TinyMCE custom element is installed on a web page, creating an editor instance is as simple as adding a `<tinymce-editor></tinymce-editor>` tag to the page. This tag is used in place of calling tinymce.init(). Many of the standard configuration properties can be specified as attributes to this tag, instead of using JavaScript code.
+        ```html
+        <script src="https://cdn.jsdelivr.net/npm/@tinymce/tinymce-webcomponent/dist/tinymce-webcomponent.min.js"></script>
+        ```
+    1. Add the `tinymce-editor` element with your API key and configuration as HTML attributes:
 
-TinyMCE for Web Components is available for free under an MIT license, and can be installed via NPM. It is compatible with open source TinyMCE, Tiny Cloud, and TinyMCE commercial self-hosted offerings. 
-At this stage, TinyMCE for Web Components is an experimental integration - we would love to hear your [feedback](https://github.com/tinymce/tinymce-webcomponent/issues) on how it can be improved.
+        ```html
+        <tinymce-editor
+          api-key="your-api-key"
+          plugins="lists link image table code help wordcount"
+        >
+           &lt;p&gt;Welcome to TinyMCE&lt;/p&gt;
+        </tinymce-editor>
+        ```
+    1. Update the `api-key` attribute to include your Tiny Cloud API key.
+
+For more information: [Using TinyMCE with Web Component - Cloud CDN](https://www.tiny.cloud/docs/tinymce/latest/webcomponent-cloud/)
+
+### Self hosted via NPM package
+
+Using TinyMCE from NPM with the Web Component integration requires a couple of extra steps. See the documentation for more information: [Using TinyMCE with Web Component - Self hosted via NPM](https://www.tiny.cloud/docs/tinymce/latest/webcomponent-pm/)
+
+## Detailed documentation
+
+* [TinyMCE Web Component Technical Reference](https://www.tiny.cloud/docs/tinymce/latest/webcomponent-ref/).
+* [TinyMCE Documentation](https://www.tiny.cloud/docs/tinymce/latest/).
+
+## Issues
+
+Have you found an issue with `tinymce-webcomponent` or do you have a feature request? Open up an [issue](https://github.com/tinymce/tinymce-webcomponent/issues) and let us know or submit a [pull request](https://github.com/tinymce/tinymce-webcomponent/pulls). *Note: for issues concerning TinyMCE please visit the [TinyMCE repository](https://github.com/tinymce/tinymce).*
+
+## License
+
+`tinymce-webcomponent` is licensed under the MIT License. See the LICENSE.txt file for details.
+
+Depending on use case, the TinyMCE core editor can be used under either GPL-2.0-or-later or a commercial license. See the [tinymce package](https://www.npmjs.com/package/tinymce) for details.
