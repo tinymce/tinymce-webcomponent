@@ -22,7 +22,7 @@ Official Web Component integration for TinyMCE, the rich text editor. Web Compon
           api-key="your-api-key"
           plugins="lists link image table code help wordcount"
         >
-          <p>Welcome to TinyMCE</p>
+           &lt;p&gt;Welcome to TinyMCE&lt;/p&gt;
         </tinymce-editor>
         ```
     1. Update the `api-key` attribute to include your Tiny Cloud API key.
