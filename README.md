@@ -2,7 +2,7 @@
 
 ## About
 
-Official Web Component integration for TinyMCE, the rich text editor. Web Components are a set of native browser APIs — Custom Elements, Shadow DOM, and HTML Templates — that let you build reusable, framework-agnostic HTML elements. This package wraps TinyMCE as a `<tinymce-editor>` custom element, used in place of calling `tinymce.init()`. Once installed on a page, creating an editor is as simple as adding a `<tinymce-editor></tinymce-editor>` tag, with most configuration properties specified as attributes instead of JavaScript. By default, it pulls TinyMCE from the Tiny Cloud CDN unless configured to use a different setup, such as self-hosting the [tinymce NPM package](https://www.npmjs.com/package/tinymce).
+Official Web Component integration for TinyMCE, the rich text editor. Web Components are a set of native browser APIs — Custom Elements, Shadow DOM, and HTML Templates — that let you build reusable, framework-agnostic HTML elements. This package wraps TinyMCE as a `<tinymce-editor>` custom element, used in place of calling `tinymce.init()`. Once installed on a page, creating an editor is as simple as adding a `<tinymce-editor></tinymce-editor>` tag, with many of the standard configuration properties can be specified as attributes. By default, it pulls TinyMCE from the Tiny Cloud CDN unless configured to use a different setup, such as self-hosting the [tinymce NPM package](https://www.npmjs.com/package/tinymce).
 
 ## Quickstart
 
