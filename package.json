@@ -1,6 +1,6 @@
 {
   "description": "Official Web Component integration for TinyMCE rich text editor",
-  "version": "2.4.1-rc",
+  "version": "2.4.1",
   "name": "@tinymce/tinymce-webcomponent",
   "repository": {
     "url": "https://github.com/tinymce/tinymce-webcomponent"
